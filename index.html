@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ProCRM — Sales Management</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg0:#080b12;--bg1:#0d1117;--bg2:#131920;--bg3:#1a2230;
+  --border:#1e2d40;--border2:#253649;
+  --accent:#0ea5e9;--accent2:#38bdf8;--accent-dim:rgba(14,165,233,.12);
+  --green:#10b981;--green-dim:rgba(16,185,129,.12);
+  --amber:#f59e0b;--amber-dim:rgba(245,158,11,.12);
+  --red:#ef4444;--red-dim:rgba(239,68,68,.12);
+  --purple:#8b5cf6;--purple-dim:rgba(139,92,246,.12);
+  --rose:#f43f5e;--rose-dim:rgba(244,63,94,.12);
+  --text:#e2e8f0;--text2:#94a3b8;--text3:#4a6280;
+  --r:10px;--r2:14px;--r3:20px;
+  --font:'IBM Plex Sans',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --display:'Syne',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font);background:var(--bg0);color:var(--text);font-size:14px;line-height:1.5;min-height:100vh;overflow-x:hidden;}
+
+/* ═══ SCROLLBAR ═══ */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--bg1);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* ═══ LOGIN ═══ */
+#login{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:var(--bg0);
+  position:relative;overflow:hidden;
+}
+#login::before{
+  content:'';position:absolute;width:600px;height:600px;
+  background:radial-gradient(circle,rgba(14,165,233,.06) 0%,transparent 70%);
+  top:-100px;right:-100px;pointer-events:none;
+}
+#login::after{
+  content:'';position:absolute;width:400px;height:400px;
+  background:radial-gradient(circle,rgba(139,92,246,.05) 0%,transparent 70%);
+  bottom:-50px;left:-50px;pointer-events:none;
+}
+.login-wrap{
+  position:relative;z-index:1;
+  background:var(--bg1);
+  border:1px solid var(--border);
+  border-radius:var(--r3);
+  padding:44px 40px;
+  width:420px;max-width:95vw;
+  box-shadow:0 40px 80px rgba(0,0,0,.5);
+}
+.login-brand{
+  display:flex;align-items:center;gap:12px;margin-bottom:32px;
+}
+.login-brand-mark{
+  width:40px;height:40px;background:var(--accent);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.login-brand-mark svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2.5;}
+.login-title{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:-.5px;}
+.login-title span{color:var(--accent);}
+.login-subtitle{font-size:12px;color:var(--text3);margin-top:2px;}
+
+.tab-row{display:flex;background:var(--bg2);border-radius:var(--r);padding:3px;gap:3px;margin-bottom:28px;}
+.tab-btn{
+  flex:1;padding:9px 0;border:none;background:none;
+  color:var(--text2);font-family:var(--font);font-size:13px;font-weight:500;
+  cursor:pointer;border-radius:8px;transition:all .2s;
+}
+.tab-btn.on{background:var(--accent);color:#fff;}
+
+.field-group{margin-bottom:14px;}
+.field-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;}
+.field{
+  width:100%;padding:11px 14px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
+  color:var(--text);font-family:var(--font);font-size:13.5px;outline:none;
+  transition:border-color .2s;
+}
+.field:focus{border-color:var(--accent);}
+.field::placeholder{color:var(--text3);}
+
+.login-btn{
+  width:100%;padding:13px;margin-top:6px;
+  background:var(--accent);color:#fff;border:none;border-radius:var(--r);
+  font-family:var(--display);font-size:14px;font-weight:700;letter-spacing:.3px;
+  cursor:pointer;transition:all .2s;
+}
+.login-btn:hover{background:var(--accent2);transform:translateY(-1px);}
+.demo-creds{
+  margin-top:20px;padding:14px;background:var(--bg2);border-radius:var(--r);
+  font-size:11.5px;color:var(--text3);line-height:2;font-family:var(--mono);
+}
+
+/* ═══ APP SHELL ═══ */
+#app{display:none;min-height:100vh;}
+.shell{display:flex;min-height:100vh;}
+
+/* ═══ SIDEBAR ═══ */
+.sidebar{
+  width:240px;flex-shrink:0;
+  background:var(--bg1);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;bottom:0;z-index:200;
+  transition:transform .3s;
+}
+.sb-top{
+  padding:22px 20px 18px;
+  border-bottom:1px solid var(--border);
+}
+.sb-brand{display:flex;align-items:center;gap:10px;}
+.sb-mark{
+  width:34px;height:34px;background:var(--accent);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.sb-mark svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2.5;}
+.sb-name{font-family:var(--display);font-size:17px;font-weight:800;letter-spacing:-.5px;}
+.sb-role{font-size:10px;color:var(--text3);margin-top:1px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;}
+
+.sb-nav{flex:1;overflow-y:auto;padding:14px 10px;}
+.sb-section{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;padding:14px 10px 6px;}
+.sb-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 10px;margin-bottom:1px;
+  border-radius:var(--r);color:var(--text2);font-size:13px;font-weight:500;
+  cursor:pointer;border:none;background:none;width:100%;text-align:left;
+  transition:all .15s;
+}
+.sb-item:hover{background:var(--bg3);color:var(--text);}
+.sb-item.on{background:var(--accent-dim);color:var(--accent2);}
+.sb-item svg{width:16px;height:16px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:1.8;}
+.sb-badge{
+  margin-left:auto;background:var(--accent);color:#fff;
+  font-size:10px;font-family:var(--mono);font-weight:500;
+  padding:1px 6px;border-radius:20px;min-width:18px;text-align:center;
+}
+.sb-badge.red{background:var(--red);}
+
+.sb-user{
+  padding:16px 20px;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.sb-avatar{
+  width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--display);font-size:13px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.sb-uname{font-size:13px;font-weight:600;}
+.sb-urole{font-size:11px;color:var(--text3);}
+.sb-logout{
+  margin-left:auto;background:none;border:none;color:var(--text3);
+  cursor:pointer;padding:4px;border-radius:6px;transition:color .15s;
+}
+.sb-logout:hover{color:var(--red);}
+.sb-logout svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;}
+
+/* ═══ MAIN AREA ═══ */
+.main{margin-left:240px;min-height:100vh;display:flex;flex-direction:column;}
+.topbar{
+  position:sticky;top:0;z-index:100;
+  background:rgba(8,11,18,.85);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:14px 32px;display:flex;align-items:center;gap:12px;
+}
+.topbar-title{font-family:var(--display);font-size:18px;font-weight:700;letter-spacing:-.3px;flex:1;}
+.topbar-sub{font-size:12px;color:var(--text3);}
+
+.content{padding:28px 32px;flex:1;}
+.page{display:none;}
+.page.on{display:block;}
+
+/* ═══ STATS GRID ═══ */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.stat{
+  background:var(--bg1);border:1px solid var(--border);border-radius:var(--r2);
+  padding:20px;position:relative;overflow:hidden;
+}
+.stat::before{
+  content:'';position:absolute;top:0;right:0;width:80px;height:80px;
+  border-radius:50%;opacity:.07;
+  transform:translate(20px,-20px);
+}
+.stat.blue::before{background:var(--accent);}
+.stat.green::before{background:var(--green);}
+.stat.amber::before{background:var(--amber);}
+.stat.purple::before{background:var(--purple);}
+.stat-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;}
+.stat-icon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;}
+.stat.blue .stat-icon{background:var(--accent-dim);color:var(--accent);}
+.stat.green .stat-icon{background:var(--green-dim);color:var(--green);}
+.stat.amber .stat-icon{background:var(--amber-dim);color:var(--amber);}
+.stat.purple .stat-icon{background:var(--purple-dim);color:var(--purple);}
+.stat-val{font-family:var(--mono);font-size:30px;font-weight:500;letter-spacing:-1px;line-height:1;}
+.stat.blue .stat-val{color:var(--accent);}
+.stat.green .stat-val{color:var(--green);}
+.stat.amber .stat-val{color:var(--amber);}
+.stat.purple .stat-val{color:var(--purple);}
+.stat-label{font-size:12px;color:var(--text3);margin-top:5px;font-weight:500;}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:3px;}
+
+/* ═══ CARDS ═══ */
+.card{background:var(--bg1);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;}
+.card-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 20px;border-bottom:1px solid var(--border);
+}
+.card-title{font-family:var(--display);font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.card-title svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;}
+.card-body{padding:20px;}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;}
+
+/* ═══ TOOLBAR ═══ */
+.toolbar{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:14px 20px;border-bottom:1px solid var(--border);
+}
+.search{
+  flex:1;min-width:180px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
+  padding:8px 14px 8px 36px;color:var(--text);font-family:var(--font);font-size:13px;
+  outline:none;transition:border-color .2s;position:relative;
+}
+.search-wrap{position:relative;flex:1;min-width:180px;}
+.search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;stroke:var(--text3);fill:none;stroke-width:2;pointer-events:none;}
+.search-wrap input{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:8px 14px 8px 34px;color:var(--text);font-family:var(--font);font-size:13px;outline:none;transition:border-color .2s;}
+.search-wrap input:focus{border-color:var(--accent);}
+.search-wrap input::placeholder{color:var(--text3);}
+.sel{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
+  padding:8px 12px;color:var(--text);font-family:var(--font);font-size:13px;cursor:pointer;outline:none;
+}
+
+/* ═══ BUTTONS ═══ */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 16px;border-radius:var(--r);border:none;
+  font-family:var(--font);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;
+}
+.btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-ghost{background:var(--bg2);color:var(--text);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent2);}
+.btn-green{background:var(--green-dim);color:var(--green);border:1px solid rgba(16,185,129,.2);}
+.btn-green:hover{background:rgba(16,185,129,.2);}
+.btn-red{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,.2);}
+.btn-red:hover{background:rgba(239,68,68,.2);}
+.btn-sm{padding:5px 11px;font-size:12px;}
+.btn-xs{padding:3px 8px;font-size:11px;}
+.btn-icon{padding:7px;width:32px;height:32px;justify-content:center;}
+
+/* ═══ TABLE ═══ */
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+thead th{
+  padding:10px 14px;text-align:left;
+  font-size:10.5px;font-weight:700;color:var(--text3);
+  text-transform:uppercase;letter-spacing:.7px;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  white-space:nowrap;
+}
+tbody tr{border-bottom:1px solid var(--border);transition:background .1s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:var(--bg2);}
+td{padding:11px 14px;font-size:13px;vertical-align:middle;}
+.td-main{font-weight:500;}
+.td-mono{font-family:var(--mono);font-size:12px;}
+.td-muted{color:var(--text2);font-size:12px;}
+.td-small{font-size:12px;color:var(--text3);max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.td-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+
+/* ═══ BADGES ═══ */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
+.bdg-new{background:var(--accent-dim);color:var(--accent2);}
+.bdg-called{background:var(--amber-dim);color:var(--amber);}
+.bdg-interested{background:var(--green-dim);color:var(--green);}
+.bdg-callback{background:var(--purple-dim);color:var(--purple);}
+.bdg-notinterested{background:var(--red-dim);color:var(--red);}
+.bdg-closed{background:rgba(16,185,129,.2);color:var(--green);}
+.bdg-priority-high{background:var(--red-dim);color:var(--red);}
+.bdg-priority-medium{background:var(--amber-dim);color:var(--amber);}
+.bdg-priority-low{background:var(--green-dim);color:var(--green);}
+
+/* ═══ CALL / WA BUTTONS ═══ */
+.call-btn{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:5px 11px;border-radius:20px;
+  background:var(--green-dim);color:var(--green);
+  border:1px solid rgba(16,185,129,.25);
+  font-size:11.5px;font-weight:600;cursor:pointer;text-decoration:none;
+  transition:all .15s;white-space:nowrap;
+}
+.call-btn:hover{background:rgba(16,185,129,.22);}
+.wa-btn{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:5px 11px;border-radius:20px;
+  background:rgba(37,211,102,.1);color:#25d366;
+  border:1px solid rgba(37,211,102,.22);
+  font-size:11.5px;font-weight:600;cursor:pointer;text-decoration:none;
+  transition:all .15s;white-space:nowrap;
+}
+.wa-btn:hover{background:rgba(37,211,102,.2);}
+
+/* ═══ MODAL ═══ */
+.overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.7);backdrop-filter:blur(6px);
+  z-index:900;align-items:center;justify-content:center;padding:20px;
+}
+.overlay.on{display:flex;}
+.modal{
+  background:var(--bg1);border:1px solid var(--border2);border-radius:var(--r3);
+  padding:30px;width:520px;max-width:100%;max-height:90vh;overflow-y:auto;
+  animation:modalIn .2s ease;
+}
+@keyframes modalIn{from{opacity:0;transform:scale(.96) translateY(8px);}to{opacity:1;transform:none;}}
+.modal-title{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:24px;
+}
+.modal-h{font-family:var(--display);font-size:18px;font-weight:700;}
+.modal-close{
+  background:var(--bg2);border:1px solid var(--border);border-radius:8px;
+  color:var(--text3);cursor:pointer;padding:6px;transition:all .15s;
+}
+.modal-close:hover{color:var(--red);border-color:var(--red);}
+.modal-close svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.5;display:block;}
+
+.frow{margin-bottom:14px;}
+.flabel{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px;}
+.finput,.fselect,.ftextarea{
+  width:100%;padding:10px 14px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
+  color:var(--text);font-family:var(--font);font-size:13.5px;outline:none;
+  transition:border-color .2s;
+}
+.finput:focus,.fselect:focus,.ftextarea:focus{border-color:var(--accent);}
+.ftextarea{resize:vertical;min-height:80px;}
+.frow-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:22px;}
+
+/* ═══ UPLOAD ═══ */
+.upload-zone{
+  border:2px dashed var(--border2);border-radius:var(--r2);
+  padding:52px 24px;text-align:center;cursor:pointer;
+  background:var(--bg2);transition:all .2s;
+}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--accent);background:rgba(14,165,233,.04);}
+.upload-zone-icon{font-size:44px;margin-bottom:14px;line-height:1;}
+.upload-zone-title{font-family:var(--display);font-size:17px;font-weight:700;margin-bottom:6px;}
+.upload-zone-sub{font-size:13px;color:var(--text3);}
+.upload-zone-hint{font-size:11px;color:var(--text3);margin-top:8px;font-family:var(--mono);}
+
+.col-map{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
+  padding:14px;margin-top:16px;font-size:12px;color:var(--text2);
+}
+.col-map strong{color:var(--text);}
+
+.preview-scroll{max-height:260px;overflow-y:auto;margin-top:14px;border:1px solid var(--border);border-radius:var(--r);}
+.preview-scroll table{font-size:12px;}
+.preview-scroll thead th{font-size:10px;padding:7px 10px;}
+.preview-scroll td{padding:7px 10px;}
+
+/* ═══ EMPLOYEES ═══ */
+.emp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;}
+.emp-card{
+  background:var(--bg1);border:1px solid var(--border);border-radius:var(--r2);
+  padding:22px;text-align:center;transition:border-color .2s;
+}
+.emp-card:hover{border-color:var(--border2);}
+.emp-av{
+  width:56px;height:56px;border-radius:50%;margin:0 auto 12px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--display);font-size:20px;font-weight:800;color:#fff;
+}
+.emp-name{font-family:var(--display);font-size:15px;font-weight:700;margin-bottom:2px;}
+.emp-email{font-size:11px;color:var(--text3);font-family:var(--mono);margin-bottom:12px;}
+.emp-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;}
+.emp-stat{background:var(--bg2);border-radius:8px;padding:8px 4px;text-align:center;}
+.emp-stat-val{font-family:var(--mono);font-size:16px;font-weight:500;}
+.emp-stat-label{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-top:2px;}
+
+/* ═══ ACTIVITY ═══ */
+.feed{display:flex;flex-direction:column;}
+.feed-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:12px 0;border-bottom:1px solid var(--border);
+}
+.feed-item:last-child{border-bottom:none;}
+.feed-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.feed-text{font-size:13px;flex:1;}
+.feed-time{font-size:11px;color:var(--text3);margin-top:2px;font-family:var(--mono);}
+
+/* ═══ PROGRESS ═══ */
+.prog-bar{height:5px;background:var(--bg2);border-radius:3px;overflow:hidden;margin-top:5px;}
+.prog-fill{height:100%;border-radius:3px;transition:width .6s ease;}
+
+/* ═══ PROFILE CARD ═══ */
+.profile-hero{
+  background:var(--bg1);border:1px solid var(--border);border-radius:var(--r2);
+  padding:28px;margin-bottom:20px;
+  display:flex;align-items:center;gap:20px;
+}
+.profile-av-large{
+  width:70px;height:70px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--display);font-size:26px;font-weight:800;color:#fff;
+}
+.profile-name{font-family:var(--display);font-size:22px;font-weight:800;}
+.profile-role{color:var(--text3);font-size:13px;margin-top:3px;}
+
+/* ═══ NOTES HISTORY ═══ */
+.note-item{
+  background:var(--bg2);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;
+  border-left:3px solid var(--border2);
+}
+.note-item.green{border-left-color:var(--green);}
+.note-item.amber{border-left-color:var(--amber);}
+.note-text{font-size:13px;margin-bottom:4px;}
+.note-meta{font-size:11px;color:var(--text3);font-family:var(--mono);}
+
+/* ═══ TOAST ═══ */
+#toast{
+  position:fixed;bottom:24px;right:24px;
+  background:var(--bg1);border:1px solid var(--border2);border-radius:var(--r);
+  padding:13px 20px;font-size:13px;font-weight:500;
+  z-index:9999;transform:translateY(10px);opacity:0;
+  transition:all .25s;pointer-events:none;
+  max-width:320px;box-shadow:0 20px 40px rgba(0,0,0,.4);
+}
+#toast.on{transform:translateY(0);opacity:1;}
+#toast.success{border-color:rgba(16,185,129,.4);color:var(--green);}
+#toast.error{border-color:rgba(239,68,68,.4);color:var(--red);}
+
+/* ═══ EMPTY STATE ═══ */
+.empty{text-align:center;padding:52px 24px;color:var(--text3);}
+.empty-icon{font-size:40px;margin-bottom:12px;}
+.empty-title{font-family:var(--display);font-size:16px;font-weight:700;color:var(--text2);margin-bottom:5px;}
+.empty-sub{font-size:13px;}
+
+/* ═══ MOBILE TOGGLE ═══ */
+.mob-menu{display:none;background:none;border:1px solid var(--border);border-radius:8px;padding:7px;cursor:pointer;color:var(--text);}
+.mob-menu svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;display:block;}
+#sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:199;}
+
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:none;}
+  .main{margin-left:0;}
+  .mob-menu{display:flex;}
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .two-col{grid-template-columns:1fr;}
+  .three-col{grid-template-columns:1fr 1fr;}
+  .content{padding:18px 16px;}
+  .topbar{padding:12px 16px;}
+  #sb-overlay.on{display:block;}
+}
+@media(max-width:480px){
+  .stats{grid-template-columns:1fr 1fr;}
+  .three-col{grid-template-columns:1fr;}
+  .frow-2{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ LOGIN ═══════════════ -->
+<div id="login">
+  <div class="login-wrap">
+    <div class="login-brand">
+      <div class="login-brand-mark">
+        <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      </div>
+      <div>
+        <div class="login-title">Pro<span>CRM</span></div>
+        <div class="login-subtitle">Sales Management Platform</div>
+      </div>
+    </div>
+    <div class="tab-row">
+      <button class="tab-btn on" onclick="setLoginRole('admin',this)">Admin</button>
+      <button class="tab-btn" onclick="setLoginRole('employee',this)">Employee</button>
+    </div>
+    <div class="field-group"><div class="field-label">Email</div>
+      <input class="field" id="li-email" type="email" placeholder="your@email.com" value="admin@procrm.com"/>
+    </div>
+    <div class="field-group"><div class="field-label">Password</div>
+      <input class="field" id="li-pass" type="password" placeholder="••••••••" value="admin123"/>
+    </div>
+    <button class="login-btn" onclick="doLogin()">Sign In →</button>
+    <div class="demo-creds">
+      Admin: admin@procrm.com / admin123<br>
+      Employee: rahul@procrm.com / emp123
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ APP ═══════════════ -->
+<div id="app">
+  <div class="shell">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+      <div class="sb-top">
+        <div class="sb-brand">
+          <div class="sb-mark"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+          <div><div class="sb-name">ProCRM</div><div class="sb-role" id="sb-role">Admin</div></div>
+        </div>
+      </div>
+      <nav class="sb-nav" id="sb-nav"></nav>
+      <div class="sb-user">
+        <div class="sb-avatar" id="sb-av">A</div>
+        <div><div class="sb-uname" id="sb-uname">Admin</div><div class="sb-urole" id="sb-urole">Administrator</div></div>
+        <button class="sb-logout" onclick="doLogout()" title="Logout">
+          <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="sb-overlay" onclick="closeSidebar()"></div>
+
+    <!-- MAIN -->
+    <div class="main">
+      <div class="topbar">
+        <button class="mob-menu" onclick="openSidebar()"><svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+        <div>
+          <div class="topbar-title" id="tb-title">Dashboard</div>
+          <div class="topbar-sub" id="tb-sub">Overview</div>
+        </div>
+        <div id="topbar-actions"></div>
+      </div>
+      <div class="content">
+
+        <!-- ── ADMIN DASHBOARD ── -->
+        <div class="page" id="page-dashboard">
+          <div class="stats" id="adash-stats"></div>
+          <div class="two-col">
+            <div class="card">
+              <div class="card-head"><div class="card-title"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Status overview</div></div>
+              <div class="card-body" id="adash-breakdown"></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><div class="card-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Activity feed</div></div>
+              <div class="card-body" style="padding:0 20px;"><div class="feed" id="adash-feed"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── UPLOAD LEADS ── -->
+        <div class="page" id="page-upload">
+          <div class="card">
+            <div class="card-body">
+              <div class="upload-zone" id="uz"
+                onclick="document.getElementById('fi').click()"
+                ondragover="event.preventDefault();this.classList.add('drag')"
+                ondragleave="this.classList.remove('drag')"
+                ondrop="handleDrop(event)">
+                <div class="upload-zone-icon">📊</div>
+                <div class="upload-zone-title">Drop your Excel or CSV file here</div>
+                <div class="upload-zone-sub">Click to browse files from your computer</div>
+                <div class="upload-zone-hint">.xlsx · .xls · .csv · All supported</div>
+              </div>
+              <input type="file" id="fi" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleFile(this.files[0])"/>
+              <div id="up-preview"></div>
+              <div id="up-actions" style="display:none">
+                <div class="frow-2" style="margin-top:18px">
+                  <div class="frow">
+                    <div class="flabel">Assign all to employee</div>
+                    <select class="fselect" id="up-assign"><option value="">— unassigned —</option></select>
+                  </div>
+                  <div class="frow">
+                    <div class="flabel">Initial status</div>
+                    <select class="fselect" id="up-status">
+                      <option value="new">New</option>
+                      <option value="called">Called</option>
+                    </select>
+                  </div>
+                </div>
+                <div style="display:flex;gap:10px;margin-top:4px">
+                  <button class="btn btn-primary" onclick="importLeads()">
+                    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Import All Leads
+                  </button>
+                  <button class="btn btn-ghost" onclick="clearUpload()">
+                    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Clear
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── ALL LEADS (ADMIN) ── -->
+        <div class="page" id="page-all-leads">
+          <div class="card">
+            <div class="toolbar">
+              <div class="search-wrap">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input placeholder="Search name, phone, email…" oninput="filterLeads(this.value,'all')"/>
+              </div>
+              <select class="sel" onchange="filterByStatus(this.value,'all')">
+                <option value="">All statuses</option>
+                <option>new</option><option>called</option><option>interested</option>
+                <option>callback</option><option>notinterested</option><option>closed</option>
+              </select>
+              <select class="sel" id="fil-emp" onchange="filterByEmp(this.value)">
+                <option value="">All employees</option>
+              </select>
+              <select class="sel" id="fil-priority" onchange="filterByPriority(this.value)">
+                <option value="">All priorities</option>
+                <option>high</option><option>medium</option><option>low</option>
+              </select>
+              <button class="btn btn-ghost btn-sm" onclick="exportCSV()">
+                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export CSV
+              </button>
+            </div>
+            <div class="tbl-wrap">
+              <table><thead><tr>
+                <th>Lead</th><th>Phone</th><th>Email</th><th>Product</th>
+                <th>Priority</th><th>Assigned</th><th>Status</th><th>Notes</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="tb-all"></tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── EMPLOYEES ── -->
+        <div class="page" id="page-employees">
+          <div class="emp-grid" id="emp-grid"></div>
+        </div>
+
+        <!-- ── REPORTS ── -->
+        <div class="page" id="page-reports">
+          <div class="stats" id="rep-stats"></div>
+          <div class="two-col">
+            <div class="card">
+              <div class="card-head"><div class="card-title">📊 Per employee performance</div></div>
+              <div class="card-body" id="rep-perf"></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><div class="card-title">🎯 Conversion funnel</div></div>
+              <div class="card-body" id="rep-funnel"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── EMPLOYEE DASHBOARD ── -->
+        <div class="page" id="page-emp-dash">
+          <div class="stats" id="edash-stats"></div>
+          <div class="two-col">
+            <div class="card">
+              <div class="card-head"><div class="card-title">🎯 Today's priority leads</div></div>
+              <div class="card-body" id="edash-priority"></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><div class="card-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> My activity</div></div>
+              <div class="card-body" style="padding:0 20px"><div class="feed" id="edash-feed"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── MY LEADS (EMPLOYEE) ── -->
+        <div class="page" id="page-my-leads">
+          <div class="card">
+            <div class="toolbar">
+              <div class="search-wrap">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input placeholder="Search your leads…" oninput="filterLeads(this.value,'my')"/>
+              </div>
+              <select class="sel" onchange="filterByStatus(this.value,'my')">
+                <option value="">All statuses</option>
+                <option>new</option><option>called</option><option>interested</option>
+                <option>callback</option><option>notinterested</option><option>closed</option>
+              </select>
+              <select class="sel" onchange="filterByPriorityMy(this.value)">
+                <option value="">All priorities</option>
+                <option>high</option><option>medium</option><option>low</option>
+              </select>
+            </div>
+            <div class="tbl-wrap">
+              <table><thead><tr>
+                <th>Lead</th><th>Phone</th><th>Email</th><th>Product</th>
+                <th>Priority</th><th>Status</th><th>Last Note</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="tb-my"></tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── MY PROFILE (EMPLOYEE) ── -->
+        <div class="page" id="page-my-profile">
+          <div class="profile-hero" id="prof-hero"></div>
+          <div class="two-col">
+            <div class="card"><div class="card-head"><div class="card-title">📊 My stats</div></div><div class="card-body" id="prof-stats"></div></div>
+            <div class="card"><div class="card-head"><div class="card-title">📋 Recent notes</div></div><div class="card-body" id="prof-notes"></div></div>
+          </div>
+        </div>
+
+      </div><!-- /content -->
+    </div><!-- /main -->
+  </div><!-- /shell -->
+</div><!-- /app -->
+
+<!-- ═══════════════ MODALS ═══════════════ -->
+<!-- Lead Modal -->
+<div class="overlay" id="ov-lead">
+  <div class="modal">
+    <div class="modal-title">
+      <div class="modal-h" id="lead-modal-h">Add Lead</div>
+      <button class="modal-close" onclick="closeOv('ov-lead')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <input type="hidden" id="lm-id"/>
+    <div class="frow-2">
+      <div class="frow"><div class="flabel">Full name *</div><input class="finput" id="lm-name" placeholder="Customer name"/></div>
+      <div class="frow"><div class="flabel">Phone *</div><input class="finput" id="lm-phone" placeholder="+91 99999 00000"/></div>
+    </div>
+    <div class="frow"><div class="flabel">Email</div><input class="finput" id="lm-email" placeholder="email@example.com"/></div>
+    <div class="frow-2">
+      <div class="frow"><div class="flabel">Product / Service</div><input class="finput" id="lm-product" placeholder="e.g. Health Plan A"/></div>
+      <div class="frow"><div class="flabel">City / Location</div><input class="finput" id="lm-city" placeholder="e.g. Mumbai"/></div>
+    </div>
+    <div class="frow-2">
+      <div class="frow" id="lm-assign-row">
+        <div class="flabel">Assign to</div>
+        <select class="fselect" id="lm-assign"><option value="">Unassigned</option></select>
+      </div>
+      <div class="frow">
+        <div class="flabel">Priority</div>
+        <select class="fselect" id="lm-priority">
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+          <option value="low">Low</option>
+        </select>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="flabel">Status</div>
+      <select class="fselect" id="lm-status">
+        <option value="new">🔵 New</option>
+        <option value="called">📞 Called</option>
+        <option value="interested">🔥 Interested</option>
+        <option value="callback">🔁 Callback</option>
+        <option value="notinterested">❌ Not Interested</option>
+        <option value="closed">✅ Closed</option>
+      </select>
+    </div>
+    <div class="frow">
+      <div class="flabel">Notes</div>
+      <textarea class="ftextarea" id="lm-notes" placeholder="Call notes, follow-up details, customer needs…"></textarea>
+    </div>
+    <div class="frow">
+      <div class="flabel">Callback date (optional)</div>
+      <input class="finput" id="lm-callback" type="datetime-local"/>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeOv('ov-lead')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveLead()">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Save Lead
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Employee Modal -->
+<div class="overlay" id="ov-emp">
+  <div class="modal">
+    <div class="modal-title">
+      <div class="modal-h">Add Employee</div>
+      <button class="modal-close" onclick="closeOv('ov-emp')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="frow"><div class="flabel">Full name *</div><input class="finput" id="em-name" placeholder="Employee full name"/></div>
+    <div class="frow"><div class="flabel">Email address (login) *</div><input class="finput" id="em-email" placeholder="emp@yourcompany.com"/></div>
+    <div class="frow-2">
+      <div class="frow"><div class="flabel">Password *</div><input class="finput" id="em-pass" type="password" placeholder="Set password"/></div>
+      <div class="frow"><div class="flabel">Phone</div><input class="finput" id="em-phone" placeholder="Employee phone"/></div>
+    </div>
+    <div class="frow"><div class="flabel">Department / Team</div><input class="finput" id="em-dept" placeholder="e.g. Sales Team A"/></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeOv('ov-emp')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEmployee()">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Add Employee
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Note Modal (employee quick update) -->
+<div class="overlay" id="ov-note">
+  <div class="modal" style="width:440px">
+    <div class="modal-title">
+      <div class="modal-h">Update Lead</div>
+      <button class="modal-close" onclick="closeOv('ov-note')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <input type="hidden" id="nm-id"/>
+    <div id="nm-lead-info" style="background:var(--bg2);border-radius:var(--r);padding:12px 14px;margin-bottom:16px;font-size:13px;"></div>
+    <div class="frow">
+      <div class="flabel">Update status</div>
+      <select class="fselect" id="nm-status">
+        <option value="new">🔵 New</option>
+        <option value="called">📞 Called</option>
+        <option value="interested">🔥 Interested</option>
+        <option value="callback">🔁 Callback</option>
+        <option value="notinterested">❌ Not Interested</option>
+        <option value="closed">✅ Closed</option>
+      </select>
+    </div>
+    <div class="frow">
+      <div class="flabel">Add note</div>
+      <textarea class="ftextarea" id="nm-note" placeholder="What happened on the call? Next steps?"></textarea>
+    </div>
+    <div class="frow">
+      <div class="flabel">Callback date (if needed)</div>
+      <input class="finput" id="nm-callback" type="datetime-local"/>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeOv('ov-note')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNote()">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Save Update
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════
+   DATA STORE
+═══════════════════════════════════════════ */
+const DB = {
+  get: k => { try { return JSON.parse(localStorage.getItem('pcrm_'+k)||'null'); } catch(e){ return null; } },
+  set: (k,v) => localStorage.setItem('pcrm_'+k, JSON.stringify(v)),
+};
+
+let S = {
+  role: 'admin', user: null,
+  leads: [], employees: [], activity: [],
+  filters: { all: { search:'', status:'', emp:'', priority:'' }, my: { search:'', status:'', priority:'' } },
+  pending: [],
+  page: '',
+};
+
+/* ── SEED ── */
+(function seed(){
+  if (!DB.get('seeded')) {
+    const employees = [
+      {id:'e1',name:'Rahul Sharma',email:'rahul@procrm.com',pass:'emp123',phone:'9876543210',dept:'Sales A',color:'#0ea5e9'},
+      {id:'e2',name:'Priya Patel',email:'priya@procrm.com',pass:'priya123',phone:'9823456789',dept:'Sales B',color:'#10b981'},
+      {id:'e3',name:'Amit Singh',email:'amit@procrm.com',pass:'amit123',phone:'9765432109',dept:'Sales A',color:'#f59e0b'},
+      {id:'e4',name:'Sneha Roy',email:'sneha@procrm.com',pass:'sneha123',phone:'9654321098',dept:'Sales B',color:'#8b5cf6'},
+    ];
+    const leads = [
+      {id:'l1',name:'Suresh Kumar',phone:'9111222333',email:'suresh@gmail.com',product:'Life Insurance',city:'Mumbai',assignedTo:'e1',status:'new',priority:'high',notes:[],callback:'',created:Date.now()-86400000*4},
+      {id:'l2',name:'Meena Gupta',phone:'9222333444',email:'meena@gmail.com',product:'Health Plan',city:'Delhi',assignedTo:'e1',status:'called',priority:'medium',notes:[{text:'Showed interest, wants brochure',time:Date.now()-86400000*2,by:'Rahul Sharma'}],callback:'',created:Date.now()-86400000*3},
+      {id:'l3',name:'Vijay Mehta',phone:'9333444555',email:'vijay@gmail.com',product:'Term Plan',city:'Pune',assignedTo:'e2',status:'interested',priority:'high',notes:[{text:'Ready to buy. Sending docs.',time:Date.now()-86400000,by:'Priya Patel'}],callback:'',created:Date.now()-86400000*2},
+      {id:'l4',name:'Anita Das',phone:'9444555666',email:'anita@gmail.com',product:'Life Insurance',city:'Kolkata',assignedTo:'e2',status:'callback',priority:'medium',notes:[{text:'Call back after 5pm',time:Date.now()-3600000*5,by:'Priya Patel'}],callback:'',created:Date.now()-86400000},
+      {id:'l5',name:'Rajesh Nair',phone:'9555666777',email:'rajesh@gmail.com',product:'Health Plan',city:'Chennai',assignedTo:'e3',status:'closed',priority:'low',notes:[{text:'Policy issued successfully',time:Date.now()-3600000*3,by:'Amit Singh'}],callback:'',created:Date.now()-86400000*5},
+      {id:'l6',name:'Kavita Joshi',phone:'9666777888',email:'kavita@gmail.com',product:'Term Plan',city:'Bangalore',assignedTo:'e3',status:'notinterested',priority:'low',notes:[{text:'Not interested at this time',time:Date.now()-3600000*2,by:'Amit Singh'}],callback:'',created:Date.now()-3600000*8},
+      {id:'l7',name:'Manoj Tiwari',phone:'9777888999',email:'manoj@gmail.com',product:'Life Insurance',city:'Hyderabad',assignedTo:'e4',status:'new',priority:'high',notes:[],callback:'',created:Date.now()-3600000*2},
+      {id:'l8',name:'Ritu Sharma',phone:'9888999000',email:'ritu@gmail.com',product:'Health Plan',city:'Jaipur',assignedTo:'e4',status:'called',priority:'medium',notes:[{text:'Seems interested, follow up tomorrow',time:Date.now()-3600000,by:'Sneha Roy'}],callback:'',created:Date.now()-3600000*6},
+    ];
+    const activity = [
+      {type:'call',text:'Rahul Sharma called Suresh Kumar',time:Date.now()-7200000,color:'#10b981',empId:'e1'},
+      {type:'upload',text:'Admin imported 8 leads',time:Date.now()-86400000,color:'#0ea5e9',empId:'admin'},
+      {type:'status',text:'Vijay Mehta marked as Interested',time:Date.now()-3600000*4,color:'#f59e0b',empId:'e2'},
+      {type:'closed',text:'Rajesh Nair deal CLOSED 🎉',time:Date.now()-3600000*3,color:'#8b5cf6',empId:'e3'},
+      {type:'note',text:'Anita Das — callback scheduled',time:Date.now()-3600000*5,color:'#0ea5e9',empId:'e2'},
+    ];
+    DB.set('employees', employees);
+    DB.set('leads', leads);
+    DB.set('activity', activity);
+    DB.set('seeded', true);
+  }
+  S.employees = DB.get('employees') || [];
+  S.leads = DB.get('leads') || [];
+  S.activity = DB.get('activity') || [];
+})();
+
+function persist() {
+  DB.set('leads', S.leads);
+  DB.set('employees', S.employees);
+  DB.set('activity', S.activity);
+}
+
+/* ═══════════════════════════════════════════
+   AUTH
+═══════════════════════════════════════════ */
+let _loginRole = 'admin';
+function setLoginRole(r, el) {
+  _loginRole = r;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('on', b === el));
+  if (r === 'admin') {
+    document.getElementById('li-email').value = 'admin@procrm.com';
+    document.getElementById('li-pass').value = 'admin123';
+  } else {
+    document.getElementById('li-email').value = 'rahul@procrm.com';
+    document.getElementById('li-pass').value = 'emp123';
+  }
+}
+
+function doLogin() {
+  const email = document.getElementById('li-email').value.trim();
+  const pass = document.getElementById('li-pass').value;
+  if (_loginRole === 'admin') {
+    if (email === 'admin@procrm.com' && pass === 'admin123') {
+      S.user = {id:'admin',name:'Admin User',role:'admin',color:'#0ea5e9'};
+    } else { toast('Invalid admin credentials','error'); return; }
+  } else {
+    const emp = S.employees.find(e => e.email === email && e.pass === pass);
+    if (!emp) { toast('Invalid credentials','error'); return; }
+    S.user = {...emp, role:'employee'};
+  }
+  S.role = S.user.role;
+  launchApp();
+}
+
+function doLogout() {
+  S.user = null; S.role = 'admin';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login').style.display = 'flex';
+  document.getElementById('li-pass').value = '';
+}
+
+/* ═══════════════════════════════════════════
+   APP
+═══════════════════════════════════════════ */
+function launchApp() {
+  document.getElementById('login').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  // Sidebar user info
+  const av = S.user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('sb-av').textContent = av;
+  document.getElementById('sb-av').style.background = S.user.color || '#0ea5e9';
+  document.getElementById('sb-uname').textContent = S.user.name;
+  document.getElementById('sb-urole').textContent = S.role === 'admin' ? 'Administrator' : 'Sales Employee';
+  document.getElementById('sb-role').textContent = S.role === 'admin' ? 'Admin Panel' : 'My Workspace';
+  buildNav();
+  navTo(S.role === 'admin' ? 'dashboard' : 'emp-dash');
+}
+
+const NAV_ADMIN = [
+  {section:'Overview'},
+  {id:'dashboard',icon:'grid',label:'Dashboard'},
+  {section:'Leads'},
+  {id:'upload',icon:'upload',label:'Upload Leads'},
+  {id:'all-leads',icon:'list',label:'All Leads',badge:'leads'},
+  {section:'Team'},
+  {id:'employees',icon:'users',label:'Employees'},
+  {section:'Analytics'},
+  {id:'reports',icon:'bar-chart',label:'Reports'},
+];
+const NAV_EMP = [
+  {section:'My Work'},
+  {id:'emp-dash',icon:'grid',label:'Dashboard'},
+  {id:'my-leads',icon:'list',label:'My Leads',badge:'my'},
+  {section:'Account'},
+  {id:'my-profile',icon:'user',label:'My Profile'},
+];
+
+const ICONS = {
+  grid:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
+  upload:'<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>',
+  list:'<svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>',
+  users:'<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>',
+  'bar-chart':'<svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+  user:'<svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+};
+
+function buildNav() {
+  const nav = S.role === 'admin' ? NAV_ADMIN : NAV_EMP;
+  document.getElementById('sb-nav').innerHTML = nav.map(n => {
+    if (n.section) return `<div class="sb-section">${n.section}</div>`;
+    const badge = n.badge ? `<span class="sb-badge" id="bdg-${n.badge}">0</span>` : '';
+    return `<button class="sb-item" id="nav-${n.id}" onclick="navTo('${n.id}')">${ICONS[n.icon]||''} ${n.label}${badge}</button>`;
+  }).join('');
+  updateBadges();
+}
+
+function updateBadges() {
+  const bl = document.getElementById('bdg-leads');
+  if (bl) bl.textContent = S.leads.length;
+  const bm = document.getElementById('bdg-my');
+  if (bm && S.user) bm.textContent = S.leads.filter(l=>l.assignedTo===S.user.id).length;
+}
+
+const PAGE_TITLES = {
+  dashboard: ['Dashboard','Overview of your CRM'],
+  upload: ['Upload Leads','Import Excel or CSV data sheets'],
+  'all-leads': ['All Leads','Manage, assign, and track every lead'],
+  employees: ['Employees','Manage team and view performance'],
+  reports: ['Reports & Analytics','Sales insights and conversion data'],
+  'emp-dash': ['My Dashboard','Your daily sales overview'],
+  'my-leads': ['My Leads','Your assigned customer leads'],
+  'my-profile': ['My Profile','Your performance and history'],
+};
+
+function navTo(page) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.sb-item').forEach(n=>n.classList.remove('on'));
+  const pg = document.getElementById('page-'+page);
+  if (pg) pg.classList.add('on');
+  const nv = document.getElementById('nav-'+page);
+  if (nv) nv.classList.add('on');
+  S.page = page;
+  const titles = PAGE_TITLES[page] || [page, ''];
+  document.getElementById('tb-title').textContent = titles[0];
+  document.getElementById('tb-sub').textContent = titles[1];
+  // Topbar actions
+  const ta = document.getElementById('topbar-actions');
+  if (page === 'all-leads' && S.role === 'admin') {
+    ta.innerHTML = `<button class="btn btn-primary btn-sm" onclick="openAddLead()"><svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Lead</button>`;
+  } else if (page === 'employees') {
+    ta.innerHTML = `<button class="btn btn-primary btn-sm" onclick="openAddEmp()"><svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Employee</button>`;
+  } else { ta.innerHTML = ''; }
+  closeSidebar();
+  renderPage(page);
+}
+
+function renderPage(p) {
+  if (p==='dashboard') renderAdminDash();
+  else if (p==='all-leads') renderAllLeads();
+  else if (p==='employees') renderEmployees();
+  else if (p==='reports') renderReports();
+  else if (p==='emp-dash') renderEmpDash();
+  else if (p==='my-leads') renderMyLeads();
+  else if (p==='my-profile') renderProfile();
+}
+
+/* ═══════════════════════════════════════════
+   ADMIN DASHBOARD
+═══════════════════════════════════════════ */
+function renderAdminDash() {
+  const t = S.leads.length;
+  const closed = S.leads.filter(l=>l.status==='closed').length;
+  const hot = S.leads.filter(l=>l.status==='interested').length;
+  const newL = S.leads.filter(l=>l.status==='new').length;
+  document.getElementById('adash-stats').innerHTML = `
+    <div class="stat blue">
+      <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+      <div class="stat-val">${t}</div><div class="stat-label">Total Leads</div><div class="stat-sub">All time</div>
+    </div>
+    <div class="stat amber">
+      <div class="stat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+      <div class="stat-val">${newL}</div><div class="stat-label">New Leads</div><div class="stat-sub">Need calling</div>
+    </div>
+    <div class="stat green">
+      <div class="stat-icon"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+      <div class="stat-val">${hot}</div><div class="stat-label">Hot Leads</div><div class="stat-sub">Interested</div>
+    </div>
+    <div class="stat purple">
+      <div class="stat-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="stat-val">${closed}</div><div class="stat-label">Closed</div><div class="stat-sub">${t?Math.round(closed/t*100):0}% rate</div>
+    </div>
+  `;
+  const statuses = [
+    {k:'new',label:'New',c:'var(--accent)'},
+    {k:'called',label:'Called',c:'var(--amber)'},
+    {k:'interested',label:'Interested',c:'var(--green)'},
+    {k:'callback',label:'Callback',c:'var(--purple)'},
+    {k:'notinterested',label:'Not Interested',c:'var(--red)'},
+    {k:'closed',label:'Closed',c:'#10b981'},
+  ];
+  document.getElementById('adash-breakdown').innerHTML = statuses.map(s => {
+    const cnt = S.leads.filter(l=>l.status===s.k).length;
+    const pct = t ? Math.round(cnt/t*100) : 0;
+    return `<div style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;color:var(--text2)">
+        <span>${s.label}</span><span style="font-family:var(--mono)">${cnt} <span style="color:var(--text3)">(${pct}%)</span></span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${s.c}"></div></div>
+    </div>`;
+  }).join('');
+  document.getElementById('adash-feed').innerHTML = [...S.activity].reverse().slice(0,8).map(a=>
+    `<div class="feed-item">
+      <div class="feed-dot" style="background:${a.color}"></div>
+      <div><div class="feed-text">${esc(a.text)}</div><div class="feed-time">${ago(a.time)}</div></div>
+    </div>`
+  ).join('') || '<div class="empty"><div class="empty-icon">📭</div>No activity yet</div>';
+}
+
+/* ═══════════════════════════════════════════
+   ALL LEADS
+═══════════════════════════════════════════ */
+function renderAllLeads() {
+  populateEmpFilter();
+  renderLeadsTable('all');
+}
+function renderMyLeads() { renderLeadsTable('my'); }
+
+function renderLeadsTable(mode) {
+  const f = S.filters[mode];
+  let leads = mode === 'my' ? S.leads.filter(l=>l.assignedTo===S.user.id) : [...S.leads];
+  if (f.search) {
+    const q = f.search.toLowerCase();
+    leads = leads.filter(l=>
+      l.name.toLowerCase().includes(q) || l.phone.includes(q) ||
+      (l.email||'').toLowerCase().includes(q) || (l.city||'').toLowerCase().includes(q)
+    );
+  }
+  if (f.status) leads = leads.filter(l=>l.status===f.status);
+  if (f.priority) leads = leads.filter(l=>l.priority===f.priority);
+  if (mode==='all' && f.emp) leads = leads.filter(l=>l.assignedTo===f.emp);
+
+  const isAdmin = S.role==='admin';
+  const tbody = document.getElementById('tb-'+mode);
+  if (!leads.length) {
+    const cols = isAdmin ? 9 : 8;
+    tbody.innerHTML = `<tr><td colspan="${cols}"><div class="empty"><div class="empty-icon">🔍</div><div class="empty-title">No leads found</div><div class="empty-sub">Try adjusting your filters</div></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = leads.map(lead => {
+    const emp = S.employees.find(e=>e.id===lead.assignedTo);
+    const lastNote = lead.notes && lead.notes.length ? lead.notes[lead.notes.length-1].text : '';
+    const assignCol = isAdmin ? `<td>${emp ? `<span style="display:inline-flex;align-items:center;gap:5px;font-size:12px"><span style="width:8px;height:8px;border-radius:50%;background:${emp.color||'#0ea5e9'};flex-shrink:0"></span>${esc(emp.name)}</span>` : '<span style="color:var(--text3)">—</span>'}</td>` : '';
+    return `<tr>
+      <td><div class="td-main">${esc(lead.name)}</div><div style="font-size:11px;color:var(--text3)">${esc(lead.city||'')}</div></td>
+      <td><span class="td-mono" style="color:var(--accent2)">${esc(lead.phone)}</span></td>
+      <td class="td-muted">${esc(lead.email||'—')}</td>
+      <td class="td-small" style="color:var(--text2)">${esc(lead.product||'—')}</td>
+      <td><span class="badge bdg-priority-${lead.priority||'medium'}">${lead.priority||'medium'}</span></td>
+      ${assignCol}
+      <td><span class="badge bdg-${lead.status}">${statusLabel(lead.status)}</span></td>
+      <td class="td-small">${esc(lastNote||'—')}</td>
+      <td>
+        <div class="td-actions">
+          <a class="call-btn" href="tel:${lead.phone.replace(/\D/g,'')}" onclick="logCall('${lead.id}')">📞 Call</a>
+          <a class="wa-btn" href="https://wa.me/${lead.phone.replace(/\D/g,'')}" target="_blank">💬 WA</a>
+          ${isAdmin
+            ? `<button class="btn btn-ghost btn-xs" onclick="openEditLead('${lead.id}')">Edit</button>
+               <button class="btn btn-red btn-xs" onclick="deleteLead('${lead.id}')">Del</button>`
+            : `<button class="btn btn-primary btn-xs" onclick="openNote('${lead.id}')">Update</button>`
+          }
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function filterLeads(v,m){ S.filters[m].search=v; renderLeadsTable(m); }
+function filterByStatus(v,m){ S.filters[m].status=v; renderLeadsTable(m); }
+function filterByEmp(v){ S.filters.all.emp=v; renderLeadsTable('all'); }
+function filterByPriority(v){ S.filters.all.priority=v; renderLeadsTable('all'); }
+function filterByPriorityMy(v){ S.filters.my.priority=v; renderLeadsTable('my'); }
+
+function populateEmpFilter() {
+  const sel = document.getElementById('fil-emp');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">All employees</option>' +
+    S.employees.map(e=>`<option value="${e.id}">${esc(e.name)}</option>`).join('');
+}
+
+/* ═══════════════════════════════════════════
+   LEAD MODAL
+═══════════════════════════════════════════ */
+function openAddLead() {
+  document.getElementById('lead-modal-h').textContent = 'Add Lead';
+  document.getElementById('lm-id').value = '';
+  ['name','phone','email','product','city','notes'].forEach(f => {
+    const el = document.getElementById('lm-'+f);
+    if (el) el.value = '';
+  });
+  document.getElementById('lm-status').value = 'new';
+  document.getElementById('lm-priority').value = 'medium';
+  document.getElementById('lm-callback').value = '';
+  populateLmAssign();
+  document.getElementById('lm-assign').value = '';
+  document.getElementById('lm-assign-row').style.display = '';
+  openOv('ov-lead');
+}
+
+function openEditLead(id) {
+  const l = S.leads.find(x=>x.id===id); if (!l) return;
+  document.getElementById('lead-modal-h').textContent = 'Edit Lead';
+  document.getElementById('lm-id').value = id;
+  document.getElementById('lm-name').value = l.name;
+  document.getElementById('lm-phone').value = l.phone;
+  document.getElementById('lm-email').value = l.email||'';
+  document.getElementById('lm-product').value = l.product||'';
+  document.getElementById('lm-city').value = l.city||'';
+  document.getElementById('lm-status').value = l.status;
+  document.getElementById('lm-priority').value = l.priority||'medium';
+  document.getElementById('lm-callback').value = l.callback||'';
+  document.getElementById('lm-notes').value = '';
+  populateLmAssign();
+  document.getElementById('lm-assign').value = l.assignedTo||'';
+  document.getElementById('lm-assign-row').style.display = '';
+  openOv('ov-lead');
+}
+
+function saveLead() {
+  const name = document.getElementById('lm-name').value.trim();
+  const phone = document.getElementById('lm-phone').value.trim();
+  if (!name||!phone) { toast('Name and phone required','error'); return; }
+  const id = document.getElementById('lm-id').value;
+  const noteText = document.getElementById('lm-notes').value.trim();
+  const data = {
+    name, phone,
+    email: document.getElementById('lm-email').value.trim(),
+    product: document.getElementById('lm-product').value.trim(),
+    city: document.getElementById('lm-city').value.trim(),
+    status: document.getElementById('lm-status').value,
+    priority: document.getElementById('lm-priority').value,
+    assignedTo: document.getElementById('lm-assign').value,
+    callback: document.getElementById('lm-callback').value,
+  };
+  if (id) {
+    const idx = S.leads.findIndex(l=>l.id===id);
+    const existing = S.leads[idx];
+    if (noteText) {
+      existing.notes = existing.notes||[];
+      existing.notes.push({text:noteText, time:Date.now(), by:S.user.name});
+    }
+    S.leads[idx] = {...existing, ...data};
+    logAct(`${S.user.name} updated ${name}`, '#f59e0b');
+    toast('Lead updated ✓');
+  } else {
+    const notes = noteText ? [{text:noteText,time:Date.now(),by:S.user.name}] : [];
+    S.leads.push({id:'l'+Date.now(), created:Date.now(), notes, ...data});
+    logAct(`${S.user.name} added new lead: ${name}`, '#0ea5e9');
+    toast('Lead added ✓');
+  }
+  persist(); updateBadges(); closeOv('ov-lead'); renderPage(S.page);
+}
+
+function deleteLead(id) {
+  if (!confirm('Delete this lead?')) return;
+  S.leads = S.leads.filter(l=>l.id!==id);
+  persist(); updateBadges(); renderLeadsTable('all');
+  toast('Lead deleted');
+}
+
+function logCall(id) {
+  const l = S.leads.find(x=>x.id===id); if (!l) return;
+  if (l.status === 'new') {
+    l.status = 'called';
+    logAct(`${S.user.name} called ${l.name}`, '#10b981', S.user.id);
+    persist();
+  }
+}
+
+function populateLmAssign() {
+  const sel = document.getElementById('lm-assign');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">Unassigned</option>' +
+    S.employees.map(e=>`<option value="${e.id}">${esc(e.name)}</option>`).join('');
+}
+
+/* ═══════════════════════════════════════════
+   QUICK NOTE (EMPLOYEE)
+═══════════════════════════════════════════ */
+function openNote(id) {
+  const l = S.leads.find(x=>x.id===id); if (!l) return;
+  document.getElementById('nm-id').value = id;
+  document.getElementById('nm-status').value = l.status;
+  document.getElementById('nm-note').value = '';
+  document.getElementById('nm-callback').value = l.callback||'';
+  document.getElementById('nm-lead-info').innerHTML =
+    `<strong>${esc(l.name)}</strong> · <span style="font-family:var(--mono);color:var(--accent2)">${esc(l.phone)}</span><br>
+     <span style="color:var(--text3);font-size:11px">${esc(l.product||'')} ${l.city?'· '+l.city:''}</span>`;
+  openOv('ov-note');
+}
+
+function saveNote() {
+  const id = document.getElementById('nm-id').value;
+  const l = S.leads.find(x=>x.id===id); if (!l) return;
+  const note = document.getElementById('nm-note').value.trim();
+  const status = document.getElementById('nm-status').value;
+  l.status = status;
+  l.callback = document.getElementById('nm-callback').value;
+  if (note) {
+    l.notes = l.notes||[];
+    l.notes.push({text:note, time:Date.now(), by:S.user.name});
+  }
+  logAct(`${S.user.name} → ${l.name}: ${statusLabel(status)}`, '#0ea5e9', S.user.id);
+  persist(); closeOv('ov-note'); renderPage(S.page); toast('Updated ✓');
+}
+
+/* ═══════════════════════════════════════════
+   EMPLOYEES
+═══════════════════════════════════════════ */
+function renderEmployees() {
+  const grid = document.getElementById('emp-grid');
+  if (!S.employees.length) {
+    grid.innerHTML = `<div class="empty"><div class="empty-icon">👥</div><div class="empty-title">No employees</div><div class="empty-sub">Add your first team member</div></div>`;
+    return;
+  }
+  grid.innerHTML = S.employees.map(emp => {
+    const myL = S.leads.filter(l=>l.assignedTo===emp.id);
+    const closed = myL.filter(l=>l.status==='closed').length;
+    const interested = myL.filter(l=>l.status==='interested').length;
+    const called = myL.filter(l=>['called','interested','callback','closed'].includes(l.status)).length;
+    return `<div class="emp-card">
+      <div class="emp-av" style="background:${emp.color||'#0ea5e9'}">${emp.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}</div>
+      <div class="emp-name">${esc(emp.name)}</div>
+      <div class="emp-email">${esc(emp.email)}</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:6px">${esc(emp.dept||'Sales')}</div>
+      <div class="emp-stats">
+        <div class="emp-stat"><div class="emp-stat-val" style="color:var(--accent)">${myL.length}</div><div class="emp-stat-label">Leads</div></div>
+        <div class="emp-stat"><div class="emp-stat-val" style="color:var(--green)">${interested}</div><div class="emp-stat-label">Hot</div></div>
+        <div class="emp-stat"><div class="emp-stat-val" style="color:var(--purple)">${closed}</div><div class="emp-stat-label">Closed</div></div>
+      </div>
+      <div style="margin-top:12px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:4px">
+          <span>Call rate</span><span>${myL.length?Math.round(called/myL.length*100):0}%</span>
+        </div>
+        <div class="prog-bar"><div class="prog-fill" style="width:${myL.length?Math.round(called/myL.length*100):0}%;background:var(--accent)"></div></div>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:12px">
+        <button class="btn btn-ghost btn-xs" style="flex:1" onclick="viewEmpLeads('${emp.id}')">View Leads</button>
+        <button class="btn btn-red btn-xs" onclick="deleteEmp('${emp.id}')">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openAddEmp() {
+  ['name','email','pass','phone','dept'].forEach(f => document.getElementById('em-'+f).value = '');
+  openOv('ov-emp');
+}
+
+function saveEmployee() {
+  const name = document.getElementById('em-name').value.trim();
+  const email = document.getElementById('em-email').value.trim();
+  const pass = document.getElementById('em-pass').value;
+  if (!name||!email||!pass) { toast('Name, email, password required','error'); return; }
+  if (S.employees.find(e=>e.email===email)) { toast('Email already exists','error'); return; }
+  const colors = ['#0ea5e9','#10b981','#f59e0b','#8b5cf6','#ef4444','#f43f5e','#06b6d4','#84cc16'];
+  S.employees.push({
+    id:'e'+Date.now(), name, email, pass,
+    phone: document.getElementById('em-phone').value.trim(),
+    dept: document.getElementById('em-dept').value.trim(),
+    color: colors[S.employees.length % colors.length],
+  });
+  persist(); closeOv('ov-emp'); renderEmployees();
+  populateLmAssign(); populateUpAssign();
+  toast('Employee added ✓');
+}
+
+function deleteEmp(id) {
+  if (!confirm('Remove this employee? Their leads will become unassigned.')) return;
+  S.employees = S.employees.filter(e=>e.id!==id);
+  S.leads.forEach(l=>{ if(l.assignedTo===id) l.assignedTo=''; });
+  persist(); renderEmployees(); toast('Employee removed');
+}
+
+function viewEmpLeads(id) {
+  S.filters.all.emp = id;
+  navTo('all-leads');
+  setTimeout(()=>{
+    const sel = document.getElementById('fil-emp');
+    if(sel) sel.value = id;
+  },50);
+}
+
+/* ═══════════════════════════════════════════
+   REPORTS
+═══════════════════════════════════════════ */
+function renderReports() {
+  const t = S.leads.length;
+  const closed = S.leads.filter(l=>l.status==='closed').length;
+  const interested = S.leads.filter(l=>l.status==='interested').length;
+  const called = S.leads.filter(l=>l.status!=='new').length;
+  document.getElementById('rep-stats').innerHTML = `
+    <div class="stat blue"><div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="stat-val">${S.employees.length}</div><div class="stat-label">Team size</div></div>
+    <div class="stat amber"><div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .84h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.09a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 15z"/></svg></div><div class="stat-val">${called}</div><div class="stat-label">Calls made</div><div class="stat-sub">${t?Math.round(called/t*100):0}% of leads</div></div>
+    <div class="stat green"><div class="stat-icon"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg></div><div class="stat-val">${interested}</div><div class="stat-label">Interested</div></div>
+    <div class="stat purple"><div class="stat-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div class="stat-val">${closed}</div><div class="stat-label">Deals closed</div><div class="stat-sub">${t?Math.round(closed/t*100):0}% overall</div></div>
+  `;
+  document.getElementById('rep-perf').innerHTML = S.employees.map(emp => {
+    const myL = S.leads.filter(l=>l.assignedTo===emp.id);
+    const cl = myL.filter(l=>l.status==='closed').length;
+    const pct = myL.length ? Math.round(cl/myL.length*100) : 0;
+    return `<div style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+        <span style="width:8px;height:8px;border-radius:50%;background:${emp.color};flex-shrink:0"></span>
+        <span style="font-size:13px;font-weight:500;flex:1">${esc(emp.name)}</span>
+        <span style="font-family:var(--mono);font-size:12px;color:var(--text3)">${cl}/${myL.length}</span>
+        <span style="font-family:var(--mono);font-size:12px;color:var(--purple)">${pct}%</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${emp.color}"></div></div>
+    </div>`;
+  }).join('') || '<div class="empty"><div class="empty-icon">👥</div>No employees yet</div>';
+
+  const funnel = [
+    {label:'Total leads',count:t,c:'var(--accent)'},
+    {label:'Called',count:S.leads.filter(l=>l.status!=='new').length,c:'var(--amber)'},
+    {label:'Interested',count:interested,c:'var(--green)'},
+    {label:'Closed',count:closed,c:'var(--purple)'},
+  ];
+  document.getElementById('rep-funnel').innerHTML = funnel.map((f,i) => {
+    const w = t ? Math.round(f.count/t*100) : 0;
+    const wPx = Math.max(w, 5);
+    return `<div style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
+        <span style="color:var(--text2)">${f.label}</span>
+        <span style="font-family:var(--mono);color:var(--text3)">${f.count} (${w}%)</span>
+      </div>
+      <div style="height:28px;background:var(--bg2);border-radius:6px;overflow:hidden">
+        <div style="height:100%;width:${wPx}%;background:${f.c};border-radius:6px;transition:width .6s;display:flex;align-items:center;padding-left:8px">
+          <span style="font-size:11px;font-family:var(--mono);color:#fff;white-space:nowrap">${f.count}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ═══════════════════════════════════════════
+   EMPLOYEE DASHBOARD
+═══════════════════════════════════════════ */
+function renderEmpDash() {
+  const h = new Date().getHours();
+  const greet = h<12?'Good morning':'h<17'?'Good afternoon':'Good evening';
+  const myL = S.leads.filter(l=>l.assignedTo===S.user.id);
+  const closed = myL.filter(l=>l.status==='closed').length;
+  const newL = myL.filter(l=>l.status==='new').length;
+  const hot = myL.filter(l=>l.status==='interested').length;
+  document.getElementById('tb-title').textContent = `${h<12?'Good morning':h<17?'Good afternoon':'Good evening'}, ${S.user.name.split(' ')[0]}!`;
+  document.getElementById('edash-stats').innerHTML = `
+    <div class="stat blue"><div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="stat-val">${myL.length}</div><div class="stat-label">My Leads</div></div>
+    <div class="stat amber"><div class="stat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg></div><div class="stat-val">${newL}</div><div class="stat-label">Need calling</div></div>
+    <div class="stat green"><div class="stat-icon"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg></div><div class="stat-val">${hot}</div><div class="stat-label">Interested</div></div>
+    <div class="stat purple"><div class="stat-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div class="stat-val">${closed}</div><div class="stat-label">Closed</div></div>
+  `;
+  const highPri = myL.filter(l=>l.priority==='high'&&l.status!=='closed'&&l.status!=='notinterested').slice(0,5);
+  document.getElementById('edash-priority').innerHTML = highPri.length ? highPri.map(l=>
+    `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:500">${esc(l.name)}</div>
+        <div style="font-size:11px;color:var(--text3);font-family:var(--mono)">${esc(l.phone)}</div>
+      </div>
+      <span class="badge bdg-${l.status}">${statusLabel(l.status)}</span>
+      <a class="call-btn" style="padding:4px 10px;font-size:11px" href="tel:${l.phone.replace(/\D/g,'')}" onclick="logCall('${l.id}')">📞</a>
+    </div>`
+  ).join('') : '<div class="empty"><div class="empty-icon">🎯</div><div class="empty-sub">No high priority leads right now</div></div>';
+
+  const myAct = S.activity.filter(a=>a.empId===S.user.id).reverse().slice(0,6);
+  document.getElementById('edash-feed').innerHTML = myAct.map(a=>
+    `<div class="feed-item">
+      <div class="feed-dot" style="background:${a.color}"></div>
+      <div><div class="feed-text">${esc(a.text)}</div><div class="feed-time">${ago(a.time)}</div></div>
+    </div>`
+  ).join('') || '<div class="empty"><div class="empty-icon">📋</div><div class="empty-sub">No activity yet. Start calling!</div></div>';
+}
+
+/* ═══════════════════════════════════════════
+   EMPLOYEE PROFILE
+═══════════════════════════════════════════ */
+function renderProfile() {
+  const u = S.user;
+  const av = u.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('prof-hero').innerHTML = `
+    <div class="profile-av-large" style="background:${u.color||'#0ea5e9'}">${av}</div>
+    <div>
+      <div class="profile-name">${esc(u.name)}</div>
+      <div class="profile-role">${esc(u.email)} · ${esc(u.dept||'Sales')}</div>
+    </div>
+  `;
+  const myL = S.leads.filter(l=>l.assignedTo===u.id);
+  const closed = myL.filter(l=>l.status==='closed').length;
+  const called = myL.filter(l=>l.status!=='new').length;
+  const statuses = [
+    {l:'New',c:myL.filter(l=>l.status==='new').length,col:'var(--accent)'},
+    {l:'Called',c:myL.filter(l=>l.status==='called').length,col:'var(--amber)'},
+    {l:'Interested',c:myL.filter(l=>l.status==='interested').length,col:'var(--green)'},
+    {l:'Callback',c:myL.filter(l=>l.status==='callback').length,col:'var(--purple)'},
+    {l:'Closed',c:closed,col:'#10b981'},
+    {l:'Not Interested',c:myL.filter(l=>l.status==='notinterested').length,col:'var(--red)'},
+  ];
+  document.getElementById('prof-stats').innerHTML = statuses.map(s=>`
+    <div style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;color:var(--text2)">
+        <span>${s.l}</span><span style="font-family:var(--mono)">${s.c}</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${myL.length?Math.round(s.c/myL.length*100):0}%;background:${s.col}"></div></div>
+    </div>`).join('');
+  const allNotes = [];
+  myL.forEach(l=>{ (l.notes||[]).forEach(n=>allNotes.push({...n,lead:l.name})); });
+  allNotes.sort((a,b)=>b.time-a.time);
+  document.getElementById('prof-notes').innerHTML = allNotes.slice(0,6).map(n=>
+    `<div class="note-item green">
+      <div class="note-text">${esc(n.text)}</div>
+      <div class="note-meta">${esc(n.lead)} · ${ago(n.time)}</div>
+    </div>`
+  ).join('') || '<div class="empty"><div class="empty-icon">📝</div>No notes yet</div>';
+}
+
+/* ═══════════════════════════════════════════
+   FILE UPLOAD
+═══════════════════════════════════════════ */
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('uz').classList.remove('drag');
+  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+}
+function handleFile(file) {
+  if (!file) return;
+  const r = new FileReader();
+  r.onload = function(e) {
+    try {
+      const wb = XLSX.read(e.target.result, {type:'binary'});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const data = XLSX.utils.sheet_to_json(ws, {defval:''});
+      if (!data.length) { toast('File is empty','error'); return; }
+      S.pending = data;
+      showPreview(data);
+      populateUpAssign();
+      document.getElementById('up-actions').style.display = 'block';
+      toast(`${data.length} rows detected ✓`);
+    } catch(err) { toast('Error: '+err.message,'error'); }
+  };
+  r.readAsBinaryString(file);
+}
+function showPreview(data) {
+  const cols = Object.keys(data[0]).slice(0,8);
+  const rows = data.slice(0,6);
+  document.getElementById('up-preview').innerHTML = `
+    <div class="col-map">
+      Detected columns: <strong>${cols.join(', ')}</strong><br>
+      Mapping → name/Name/Full Name, phone/Phone/Mobile, email/Email, product/Product/Service, city/City
+    </div>
+    <div style="margin:8px 0 4px;font-size:12px;color:var(--text3)">Preview (first ${rows.length} of ${data.length} rows)</div>
+    <div class="preview-scroll">
+      <table><thead><tr>${cols.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead>
+      <tbody>${rows.map(r=>`<tr>${cols.map(c=>`<td>${esc(String(r[c]||''))}</td>`).join('')}</tr>`).join('')}</tbody></table>
+    </div>`;
+}
+function populateUpAssign() {
+  const sel = document.getElementById('up-assign'); if (!sel) return;
+  sel.innerHTML = '<option value="">— unassigned —</option>' +
+    S.employees.map(e=>`<option value="${e.id}">${esc(e.name)}</option>`).join('');
+}
+function importLeads() {
+  if (!S.pending.length) return;
+  const assignTo = document.getElementById('up-assign').value;
+  const status = document.getElementById('up-status').value;
+  let count = 0;
+  S.pending.forEach(row => {
+    const name = String(row.name||row.Name||row.NAME||row['Full Name']||row['full_name']||row['Customer Name']||'').trim();
+    const phone = String(row.phone||row.Phone||row.Mobile||row.mobile||row.PHONE||row['Phone Number']||'').trim();
+    if (!name && !phone) return;
+    S.leads.push({
+      id:'l'+Date.now()+Math.random().toString(36).slice(2,6),
+      created:Date.now(),
+      name: name||'Unknown',
+      phone: phone||'N/A',
+      email: String(row.email||row.Email||row.EMAIL||'').trim(),
+      product: String(row.product||row.Product||row.service||row.Service||row['Product Name']||'').trim(),
+      city: String(row.city||row.City||row.location||row.Location||'').trim(),
+      assignedTo: assignTo||'',
+      status,
+      priority:'medium',
+      notes:[],
+      callback:'',
+    });
+    count++;
+  });
+  persist(); updateBadges();
+  logAct(`Admin imported ${count} leads from Excel`, '#0ea5e9', 'admin');
+  toast(`${count} leads imported! ✓`);
+  clearUpload();
+  navTo('all-leads');
+}
+function clearUpload() {
+  S.pending = [];
+  document.getElementById('up-preview').innerHTML = '';
+  document.getElementById('up-actions').style.display = 'none';
+  document.getElementById('fi').value = '';
+}
+
+/* ═══════════════════════════════════════════
+   EXPORT
+═══════════════════════════════════════════ */
+function exportCSV() {
+  const h = ['Name','Phone','Email','Product','City','Assigned To','Status','Priority','Notes','Created'];
+  const rows = S.leads.map(l => {
+    const emp = S.employees.find(e=>e.id===l.assignedTo);
+    const lastNote = (l.notes||[]).length ? l.notes[l.notes.length-1].text : '';
+    return [l.name,l.phone,l.email,l.product,l.city,emp?emp.name:'',l.status,l.priority||'',lastNote,new Date(l.created).toLocaleDateString()]
+      .map(v=>`"${String(v||'').replace(/"/g,'""')}"`).join(',');
+  });
+  const blob = new Blob([[h.join(','),...rows].join('\n')], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'leads_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+  toast('Exported ✓');
+}
+
+/* ═══════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════ */
+function openOv(id) { document.getElementById(id).classList.add('on'); }
+function closeOv(id) { document.getElementById(id).classList.remove('on'); }
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');}));
+
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sb-overlay').classList.add('on');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sb-overlay').classList.remove('on');
+}
+
+function toast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'on ' + type;
+  clearTimeout(t._timer);
+  t._timer = setTimeout(()=>t.classList.remove('on'), 2800);
+}
+
+function logAct(text, color, empId) {
+  S.activity.push({text, color, time:Date.now(), empId: empId||S.user?.id||'admin'});
+  if (S.activity.length > 100) S.activity = S.activity.slice(-100);
+}
+
+function ago(ts) {
+  const s = Math.floor((Date.now()-ts)/1000);
+  if (s<60) return 'just now';
+  if (s<3600) return Math.floor(s/60)+'m ago';
+  if (s<86400) return Math.floor(s/3600)+'h ago';
+  return Math.floor(s/86400)+'d ago';
+}
+
+function statusLabel(s) {
+  return {new:'New',called:'Called',interested:'Interested',callback:'Callback',notinterested:'Not Interested',closed:'Closed'}[s]||s;
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
