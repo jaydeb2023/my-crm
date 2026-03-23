@@ -357,7 +357,7 @@ td{padding:10px 13px;font-size:13px;vertical-align:middle;}
       <select class="sel" id="fil-pri" onchange="fPri(this.value)"><option value="">All priorities</option><option>high</option><option>medium</option><option>low</option></select>
       <button class="btn btn-g btn-sm" onclick="exportCSV()"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export</button>
     </div>
-    <div class="tw"><table><thead><tr><th>Lead</th><th>Phone</th><th>Email</th><th>Product</th><th>Priority</th><th>Assigned</th><th>Status</th><th>Calls</th><th>Last Remark</th><th>Actions</th></tr></thead><tbody id="tb-all"></tbody></table></div>
+    <div class="tw"><table><thead><tr><th>Lead</th><th>Phone</th><th>Email</th><th>Product</th><th>Priority</th><th>Assigned</th><th>Status</th><th>Calls</th><th>Last Remark</th><th>Actions</th></tr></thead><tbody id="tb-all"></tbody></table></div><div id="pg-all"></div>
   </div>
 </div>
 
@@ -417,7 +417,7 @@ td{padding:10px 13px;font-size:13px;vertical-align:middle;}
       <select class="sel" onchange="fStatus(this.value,'my')"><option value="">All statuses</option><option>new</option><option>called</option><option>interested</option><option>callback</option><option>notinterested</option><option>closed</option></select>
       <select class="sel" onchange="fPriMy(this.value)"><option value="">All priorities</option><option>high</option><option>medium</option><option>low</option></select>
     </div>
-    <div class="tw"><table><thead><tr><th>Lead</th><th>Phone</th><th>Email</th><th>Product</th><th>Priority</th><th>Status</th><th>Calls</th><th>Last Remark</th><th>Actions</th></tr></thead><tbody id="tb-my"></tbody></table></div>
+    <div class="tw"><table><thead><tr><th>Lead</th><th>Phone</th><th>Email</th><th>Product</th><th>Priority</th><th>Status</th><th>Calls</th><th>Last Remark</th><th>Actions</th></tr></thead><tbody id="tb-my"></tbody></table></div><div id="pg-my"></div>
   </div>
 </div>
 
@@ -505,44 +505,23 @@ const DB={get:k=>{try{return JSON.parse(localStorage.getItem('ecrm_'+k)||'null')
 let S={role:'admin',user:null,leads:[],employees:[],admins:[],callLogs:[],activity:[],filters:{all:{q:'',status:'',emp:'',pri:''},my:{q:'',status:'',pri:''}},callFilters:{q:'',emp:'',status:''},pending:[],aiPending:[],page:''};
 
 (function seed(){
-  if(DB.get('seeded2')) {
-    S.employees=DB.get('employees')||[];S.leads=DB.get('leads')||[];S.callLogs=DB.get('callLogs')||[];S.activity=DB.get('activity')||[];
-    // Always force correct admin credentials
-    let admins=DB.get('admins')||[];
-    const idx=admins.findIndex(a=>a.id==='admin');
-    if(idx>=0){admins[idx].email='admin@evynta.in';admins[idx].pass='Evynta@2026';}
-    else{admins.unshift({id:'admin',name:'Admin User',email:'admin@evynta.in',pass:'Evynta@2026',role:'super',created:Date.now()});}
-    DB.set('admins',admins);S.admins=admins;
-    return;
+  // Always load latest data from storage
+  S.employees = DB.get('employees')||[];
+  S.leads     = DB.get('leads')||[];
+  S.callLogs  = DB.get('callLogs')||[];
+  S.activity  = DB.get('activity')||[];
+  // Always force correct admin credentials regardless of what's stored
+  let admins  = DB.get('admins')||[];
+  const idx   = admins.findIndex(a=>a.id==='admin');
+  if(idx>=0){ admins[idx].email='admin@evynta.in'; admins[idx].pass='Evynta@2026'; }
+  else { admins.unshift({id:'admin',name:'Admin User',email:'admin@evynta.in',pass:'Evynta@2026',role:'super',created:Date.now()}); }
+  DB.set('admins',admins);
+  S.admins = admins;
+  // First time ever — no seed data, start clean
+  if(!DB.get('initialized')){
+    DB.set('employees',[]);DB.set('leads',[]);DB.set('callLogs',[]);DB.set('activity',[]);
+    DB.set('initialized',true);
   }
-  const employees=[
-    {id:'e1',name:'Rahul Sharma',email:'rahul@evynta.com',pass:'emp123',phone:'9876543210',dept:'Sales A',color:'#0ea5e9'},
-    {id:'e2',name:'Priya Patel',email:'priya@evynta.com',pass:'priya123',phone:'9823456789',dept:'Sales B',color:'#22c55e'},
-    {id:'e3',name:'Amit Singh',email:'amit@evynta.com',pass:'amit123',phone:'9765432109',dept:'Sales A',color:'#f59e0b'},
-  ];
-  const leads=[
-    {id:'l1',name:'Suresh Kumar',phone:'9111222333',email:'suresh@gmail.com',product:'Life Insurance',city:'Mumbai',assignedTo:'e1',status:'new',priority:'high',remarks:[],callCount:0,callback:'',created:Date.now()-86400000*4},
-    {id:'l2',name:'Meena Gupta',phone:'9222333444',email:'meena@gmail.com',product:'Health Plan',city:'Delhi',assignedTo:'e1',status:'called',priority:'medium',remarks:[{text:'Interested, wants brochure',time:Date.now()-86400000*2,by:'Rahul Sharma',callStatus:'made',dur:5}],callCount:1,callback:'',created:Date.now()-86400000*3},
-    {id:'l3',name:'Vijay Mehta',phone:'9333444555',email:'vijay@gmail.com',product:'Term Plan',city:'Pune',assignedTo:'e2',status:'interested',priority:'high',remarks:[{text:'Ready to buy. Sending docs.',time:Date.now()-86400000,by:'Priya Patel',callStatus:'made',dur:12}],callCount:2,callback:'',created:Date.now()-86400000*2},
-    {id:'l4',name:'Anita Das',phone:'9444555666',email:'anita@gmail.com',product:'Life Insurance',city:'Kolkata',assignedTo:'e2',status:'callback',priority:'medium',remarks:[{text:'Call back after 5pm',time:Date.now()-3600000*5,by:'Priya Patel',callStatus:'missed',dur:0}],callCount:1,callback:'',created:Date.now()-86400000},
-    {id:'l5',name:'Rajesh Nair',phone:'9555666777',email:'rajesh@gmail.com',product:'Health Plan',city:'Chennai',assignedTo:'e3',status:'closed',priority:'low',remarks:[{text:'Policy issued. Closed!',time:Date.now()-3600000*3,by:'Amit Singh',callStatus:'made',dur:18}],callCount:3,callback:'',created:Date.now()-86400000*5},
-  ];
-  const now=Date.now();
-  const callLogs=[
-    {id:'c1',empId:'e1',empName:'Rahul Sharma',leadId:'l2',leadName:'Meena Gupta',phone:'9222333444',status:'made',dur:5,remark:'Interested, wants brochure',time:now-86400000*2},
-    {id:'c2',empId:'e2',empName:'Priya Patel',leadId:'l3',leadName:'Vijay Mehta',phone:'9333444555',status:'made',dur:12,remark:'Ready to buy. Sending docs.',time:now-86400000},
-    {id:'c3',empId:'e2',empName:'Priya Patel',leadId:'l4',leadName:'Anita Das',phone:'9444555666',status:'missed',dur:0,remark:'Call back after 5pm',time:now-3600000*5},
-    {id:'c4',empId:'e3',empName:'Amit Singh',leadId:'l5',leadName:'Rajesh Nair',phone:'9555666777',status:'made',dur:18,remark:'Policy issued. Closed!',time:now-3600000*3},
-  ];
-  const activity=[
-    {text:'Rahul Sharma called Meena Gupta',time:now-86400000*2,color:'#22c55e',empId:'e1'},
-    {text:'Admin uploaded 5 leads',time:now-86400000*3,color:'#0ea5e9',empId:'admin'},
-    {text:'Vijay Mehta marked Interested 🔥',time:now-86400000,color:'#f59e0b',empId:'e2'},
-    {text:'Amit Singh CLOSED Rajesh Nair 🎉',time:now-3600000*3,color:'#a855f7',empId:'e3'},
-  ];
-  const admins=[{id:'admin',name:'Admin User',email:'admin@evynta.in',pass:'Evynta@2026',role:'super',created:now}];
-  S.employees=employees;S.leads=leads;S.admins=admins;S.callLogs=callLogs;S.activity=activity;
-  DB.set('employees',employees);DB.set('leads',leads);DB.set('admins',admins);DB.set('callLogs',callLogs);DB.set('activity',activity);DB.set('seeded2',true);
 })();
 
 function persist(){DB.set('leads',S.leads);DB.set('employees',S.employees);DB.set('admins',S.admins);DB.set('callLogs',S.callLogs);DB.set('activity',S.activity);}
@@ -552,6 +531,12 @@ function persist(){DB.set('leads',S.leads);DB.set('employees',S.employees);DB.se
 // ═══════════════════════════════════════
 let _lr='admin';
 function setLR(r,el){_lr=r;document.querySelectorAll('.ltab').forEach(b=>b.classList.toggle('on',b===el));}
+function clearAllData(){
+  // Clear ALL evynta localStorage keys
+  Object.keys(localStorage).filter(k=>k.startsWith('ecrm_')).forEach(k=>localStorage.removeItem(k));
+  toast('Data cleared! Reloading...','s');
+  setTimeout(()=>location.reload(),1200);
+}
 function doLogin(){
   const em=document.getElementById('le').value.trim();
   const pw=document.getElementById('lp').value.trim();
@@ -678,7 +663,26 @@ function rLeadsTable(mode){
   if(mode==='all'&&f.emp)leads=leads.filter(l=>l.assignedTo===f.emp);
   const isA=S.role==='admin';
   const tbody=document.getElementById('tb-'+(mode==='all'?'all':'my'));
-  if(!leads.length){tbody.innerHTML=`<tr><td colspan="10"><div class="empty"><div class="empty-i">🔍</div><div class="empty-t">No leads found</div>Try adjusting filters</div></td></tr>`;return;}
+  if(!leads.length){tbody.innerHTML=`<tr><td colspan="10"><div class="empty"><div class="empty-i">🔍</div><div class="empty-t">No leads found</div>Try adjusting filters</div></td></tr>`;
+  const pgEl=document.getElementById('pg-'+mode);if(pgEl)pgEl.innerHTML='';return;}
+  // Pagination - 100 per page
+  const PAGE=100;
+  if(!S.page_num)S.page_num={};
+  if(!S.page_num[mode])S.page_num[mode]=0;
+  const totalPages=Math.ceil(leads.length/PAGE);
+  if(S.page_num[mode]>=totalPages)S.page_num[mode]=0;
+  const start=S.page_num[mode]*PAGE;
+  const pageLeads=leads.slice(start,start+PAGE);
+  // Pagination controls
+  const pgEl=document.getElementById('pg-'+mode);
+  if(pgEl){
+    pgEl.innerHTML=leads.length>PAGE?`<div style="display:flex;align-items:center;gap:8px;padding:10px 16px;border-top:1px solid var(--border);font-size:12px;color:var(--text3)">
+      <button onclick="changePage('${mode}',-1)" style="background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px">←</button>
+      <span>Page <strong style="color:var(--text)">${S.page_num[mode]+1}</strong> of ${totalPages} · Showing ${start+1}–${Math.min(start+PAGE,leads.length)} of <strong style="color:var(--text)">${leads.length}</strong> leads</span>
+      <button onclick="changePage('${mode}',1)" style="background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px">→</button>
+    </div>`:'';
+  }
+  const leads_orig=leads;leads=pageLeads;
   tbody.innerHTML=leads.map(lead=>{
     const emp=S.employees.find(e=>e.id===lead.assignedTo);
     const lastR=lead.remarks&&lead.remarks.length?lead.remarks[lead.remarks.length-1].text:'';
@@ -701,9 +705,17 @@ function rLeadsTable(mode){
     </tr>`;
   }).join('');
 }
-function fLeads(v,m){S.filters[m].q=v;rLeadsTable(m);}
-function fStatus(v,m){S.filters[m].status=v;rLeadsTable(m);}
-function fEmp(v){S.filters.all.emp=v;rLeadsTable('all');}
+function changePage(mode,dir){
+  if(!S.page_num)S.page_num={};
+  if(!S.page_num[mode])S.page_num[mode]=0;
+  S.page_num[mode]+=dir;
+  if(S.page_num[mode]<0)S.page_num[mode]=0;
+  rLeadsTable(mode);
+  window.scrollTo(0,0);
+}
+function fLeads(v,m){if(!S.page_num)S.page_num={};S.page_num[m]=0;S.filters[m].q=v;rLeadsTable(m);}
+function fStatus(v,m){if(!S.page_num)S.page_num={};S.page_num[m]=0;S.filters[m].status=v;rLeadsTable(m);}
+function fEmp(v){if(!S.page_num)S.page_num={};S.page_num.all=0;S.filters.all.emp=v;rLeadsTable('all');}
 function fPri(v){S.filters.all.pri=v;rLeadsTable('all');}
 function fPriMy(v){S.filters.my.pri=v;rLeadsTable('my');}
 function populateEmpFilter(){
