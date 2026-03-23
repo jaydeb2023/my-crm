@@ -277,10 +277,9 @@ td{padding:10px 13px;font-size:13px;vertical-align:middle;}
     <button class="ltab on" onclick="setLR('admin',this)">Admin</button>
     <button class="ltab" onclick="setLR('employee',this)">Employee</button>
   </div>
-  <div class="fg"><div class="fl">Email</div><input class="fi" id="le" type="email" placeholder="your@email.com" value="admin@evynta.com"/></div>
-  <div class="fg"><div class="fl">Password</div><input class="fi" id="lp" type="password" placeholder="••••••••" value="admin123"/></div>
+  <div class="fg"><div class="fl">Email</div><input class="fi" id="le" type="email" placeholder="your@email.com"/></div>
+  <div class="fg"><div class="fl">Password</div><input class="fi" id="lp" type="password" placeholder="••••••••"/></div>
   <button class="lbtn" onclick="doLogin()">Sign In →</button>
-  <div class="lcreds">Admin: admin@evynta.com / admin123<br>Demo emp: rahul@evynta.com / emp123</div>
 </div>
 </div>
 <!-- APP -->
@@ -498,7 +497,7 @@ td{padding:10px 13px;font-size:13px;vertical-align:middle;}
 </div></div>
 
 <div id="toast"></div>
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ═══════════════════════════════════════
 // DATA LAYER
 // ═══════════════════════════════════════
@@ -543,7 +542,7 @@ function persist(){DB.set('leads',S.leads);DB.set('employees',S.employees);DB.se
 // AUTH
 // ═══════════════════════════════════════
 let _lr='admin';
-function setLR(r,el){_lr=r;document.querySelectorAll('.ltab').forEach(b=>b.classList.toggle('on',b===el));if(r==='admin'){document.getElementById('le').value='admin@evynta.com';document.getElementById('lp').value='admin123';}else{document.getElementById('le').value='rahul@evynta.com';document.getElementById('lp').value='emp123';}}
+function setLR(r,el){_lr=r;document.querySelectorAll('.ltab').forEach(b=>b.classList.toggle('on',b===el));}
 function doLogin(){
   const em=document.getElementById('le').value.trim(),pw=document.getElementById('lp').value;
   if(_lr==='admin'){
@@ -1141,9 +1140,4 @@ function closeSB(){document.getElementById('sidebar').classList.remove('open');d
 let _toastT;
 function toast(msg,type='s'){const t=document.getElementById('toast');t.textContent=msg;t.className='on '+type;clearTimeout(_toastT);_toastT=setTimeout(()=>t.classList.remove('on'),2800);}
 function logAct(text,color,empId){S.activity.push({text,color,time:Date.now(),empId:empId||S.user?.id||'admin'});if(S.activity.length>100)S.activity=S.activity.slice(-100);}
-function ago(ts){const s=Math.floor((Date.now()-ts)/1000);if(s<60)return'just now';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago';}
-function sLabel(s){return{new:'New',called:'Called',interested:'Interested',callback:'Callback',notinterested:'Not Interested',closed:'Closed'}[s]||s;}
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-</script>
-</body>
-</html>
+function ago(ts){const s=Math.floor((Date.now()-ts)/1000);if(s<60)return'just now';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h
