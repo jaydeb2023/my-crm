@@ -348,6 +348,7 @@ td{padding:10px 13px;font-size:13px;vertical-align:middle;}
       <select class="sel" id="f-emp" onchange="loadLeads(true)"><option value="">All employees</option></select>
       <select class="sel" id="f-pri" onchange="loadLeads(true)"><option value="">All priorities</option><option>high</option><option>medium</option><option>low</option></select>
       <button class="btn btn-g btn-sm" onclick="exportCSV()">⬇ Export CSV</button>
+      <button class="btn btn-am btn-sm" onclick="openBulkAssign()">👥 Bulk Assign</button>
     </div>
     <div class="tw"><table><thead><tr><th>Lead</th><th>Phone</th><th>Email</th><th>Product</th><th>Priority</th><th>Assigned to</th><th>Status</th><th>Calls</th><th>Last remark</th><th>Actions</th></tr></thead><tbody id="tb-all"></tbody></table></div>
     <div class="pgbar" id="pg-all"></div>
@@ -481,6 +482,42 @@ td{padding:10px 13px;font-size:13px;vertical-align:middle;}
   <div class="fr"><div class="fl2">Email *</div><input class="finp" id="adm-email" placeholder="admin@evynta.in"/></div>
   <div class="fr"><div class="fl2">Password *</div><input class="finp" id="adm-pass" type="password" placeholder="Password"/></div>
   <div class="mfoot"><button class="btn btn-g" onclick="closeOv('ov-admin')">Cancel</button><button class="btn btn-p" onclick="saveAdmin()">Add Admin</button></div>
+</div></div>
+
+
+<!-- Bulk Assign Modal -->
+<div class="ov" id="ov-bulk">
+<div class="modal narrow">
+  <div class="mh"><div class="mt">Bulk Assign Leads</div><button class="mcls" onclick="closeOv('ov-bulk')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+  <div style="background:var(--bg2);border-radius:var(--r);padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--text2)">
+    Assign leads in bulk based on filters below. Only leads matching your current filters will be assigned.
+  </div>
+  <div class="fr">
+    <div class="fl2">Assign to employee *</div>
+    <select class="fsel" id="bulk-emp-sel"><option value="">— select employee —</option></select>
+  </div>
+  <div class="fr">
+    <div class="fl2">Which leads to assign</div>
+    <select class="fsel" id="bulk-scope">
+      <option value="unassigned">Only unassigned leads</option>
+      <option value="all">All leads (overwrite existing assignments)</option>
+      <option value="status">By status</option>
+    </select>
+  </div>
+  <div class="fr" id="bulk-status-row" style="display:none">
+    <div class="fl2">Status to assign</div>
+    <select class="fsel" id="bulk-status-sel">
+      <option value="new">New</option>
+      <option value="called">Called</option>
+      <option value="interested">Interested</option>
+      <option value="callback">Callback</option>
+    </select>
+  </div>
+  <div id="bulk-count" style="font-size:12px;color:var(--text3);margin-bottom:8px"></div>
+  <div class="mfoot">
+    <button class="btn btn-g" onclick="closeOv('ov-bulk')">Cancel</button>
+    <button class="btn btn-p" onclick="doBulkAssign()">Assign Leads</button>
+  </div>
 </div></div>
 
 <div id="toast"></div>
@@ -1404,6 +1441,60 @@ function toast(msg,type='s'){const t=document.getElementById('toast');t.textCont
 function ago(ts){const s=Math.floor((Date.now()-new Date(ts).getTime())/1000);if(s<60)return'just now';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago';}
 function sLabel(s){return{new:'New',called:'Called',interested:'Interested',callback:'Callback',notinterested:'Not Interested',closed:'Closed'}[s]||s;}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+
+// ═══════════════════════════════════════════
+// BULK ASSIGN
+// ═══════════════════════════════════════════
+async function openBulkAssign(){
+  // Populate employee dropdown
+  const sel = document.getElementById('bulk-emp-sel');
+  sel.innerHTML = '<option value="">— select employee —</option>' +
+    S.employees.map(e=>`<option value="${e.id}">${esc(e.name)}</option>`).join('');
+  // Show count of unassigned
+  try{
+    const {count} = await supaQ('leads','assigned_to=is.null&select=id');
+    document.getElementById('bulk-count').textContent = `Currently ${count.toLocaleString()} unassigned leads`;
+  }catch(e){}
+  document.getElementById('bulk-status-row').style.display='none';
+  document.getElementById('bulk-scope').onchange = function(){
+    document.getElementById('bulk-status-row').style.display = this.value==='status'?'block':'none';
+  };
+  openOv('ov-bulk');
+}
+
+async function doBulkAssign(){
+  const empId = document.getElementById('bulk-emp-sel').value;
+  const scope = document.getElementById('bulk-scope').value;
+  if(!empId){toast('Select an employee','e');return;}
+  const emp = S.employees.find(e=>e.id===empId);
+  let filter = '';
+  if(scope==='unassigned') filter = 'assigned_to=is.null';
+  else if(scope==='status'){
+    const st = document.getElementById('bulk-status-sel').value;
+    filter = `status=eq.${st}`;
+  }
+  // else scope==='all' — no filter, update all
+  if(!confirm(`Assign ${scope==='all'?'ALL':'matching'} leads to ${emp.name}? This cannot be undone easily.`)) return;
+  try{
+    const url = `${SUPA_URL}/rest/v1/leads${filter?'?'+filter:''}`;
+    const r = await fetch(url, {
+      method:'PATCH',
+      headers:{
+        'apikey':SUPA_KEY,
+        'Authorization':'Bearer '+SUPA_KEY,
+        'Content-Type':'application/json',
+        'Prefer':'return=minimal'
+      },
+      body: JSON.stringify({assigned_to: empId})
+    });
+    if(!r.ok) throw new Error(await r.text());
+    closeOv('ov-bulk');
+    toast(`Leads assigned to ${emp.name} ✓`,'s');
+    loadLeads(true);
+    rDash();
+  }catch(e){toast('Error: '+e.message,'e');}
+}
 
 // Boot
 boot();
