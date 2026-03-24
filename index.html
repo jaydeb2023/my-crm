@@ -117,9 +117,6 @@ body{font-family:var(--font);background:var(--bg0);color:var(--text);font-size:1
 .stat.re .stat-v{color:var(--red);}
 .stat.or .stat-v{color:var(--orange);}
 .stat-l{font-size:12px;color:var(--text3);margin-top:4px;font-weight:500;}
-.stat-trend{font-size:10px;margin-top:2px;}
-.stat-trend.up{color:var(--green);}
-.stat-trend.dn{color:var(--red);}
 
 /* ── CARDS ── */
 .card{background:var(--bg1);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;}
@@ -182,6 +179,7 @@ td{padding:10px 13px;font-size:13px;vertical-align:middle;}
 .bdg-hot{background:linear-gradient(135deg,var(--red),var(--orange));color:#fff;}
 .bdg-warm{background:var(--amber-dim);color:var(--amber);}
 .bdg-cold{background:var(--blue-dim);color:var(--blue2);}
+.bdg-cat{background:rgba(6,182,212,.15);color:var(--cyan);border:1px solid rgba(6,182,212,.2);}
 
 /* ── CALL/WA BTNS ── */
 .cbtn{display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:20px;background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,.25);font-size:11px;font-weight:700;cursor:pointer;text-decoration:none;transition:all .15s;white-space:nowrap;}
@@ -430,7 +428,7 @@ td{padding:10px 13px;font-size:13px;vertical-align:middle;}
     <div id="up-tab-ai" style="display:none">
       <div class="aibox">
         <div class="aibox-t">✨ Paste WhatsApp chat, email list, or any unstructured text</div>
-        <textarea class="aitxt" id="ai-text" placeholder="Paste data here — any format:&#10;Suresh Kumar | 9876543210 | suresh@email.com | ABC Corp&#10;Meena Gupta, 9823456789, meena@gmail.com&#10;&#10;Name: Raj Sharma&#10;Phone: 9812345678&#10;Company: XYZ Ltd"></textarea>
+        <textarea class="aitxt" id="ai-text" placeholder="Paste data here — any format:&#10;1,Jai Shree Bala Ji Tour,Rohini Sector 28,+91 99990 12345,Weak Point: 760+ reviews but no site.&#10;&#10;Name: Raj Sharma | Phone: 9812345678 | Company: XYZ Ltd | Address: Block B, Karol Bagh&#10;Remark: Interested in website package"></textarea>
         <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
           <button class="btn btn-p" onclick="parseAIText()">✨ Parse & Preview</button>
           <button class="btn btn-g" onclick="document.getElementById('ai-text').value='';document.getElementById('ai-preview').innerHTML=''">Clear</button>
@@ -443,9 +441,10 @@ td{padding:10px 13px;font-size:13px;vertical-align:middle;}
         <div class="fr2"><div class="fr"><div class="fl2">Full Name *</div><input class="finp" id="man-name" placeholder="Contact name"/></div><div class="fr"><div class="fl2">Phone *</div><input class="finp" id="man-phone" placeholder="+91 99999 00000"/></div></div>
         <div class="fr2"><div class="fr"><div class="fl2">Company Name</div><input class="finp" id="man-company" placeholder="Company / Organization"/></div><div class="fr"><div class="fl2">Email</div><input class="finp" id="man-email" placeholder="email@example.com"/></div></div>
         <div class="fr"><div class="fl2">Address</div><input class="finp" id="man-address" placeholder="Full address"/></div>
-        <div class="fr2"><div class="fr"><div class="fl2">Product / Service</div><input class="finp" id="man-product" placeholder="e.g. Health Plan"/></div><div class="fr"><div class="fl2">City</div><input class="finp" id="man-city" placeholder="City"/></div></div>
-        <div class="fr2"><div class="fr"><div class="fl2">Lead Source</div><select class="fsel" id="man-source"><option value="">Unknown</option><option>Website</option><option>WhatsApp</option><option>Reference</option><option>Cold Call</option><option>Exhibition</option><option>Social Media</option><option>Email Campaign</option><option>Other</option></select></div><div class="fr"><div class="fl2">Deal Value (₹)</div><input class="finp" id="man-deal" type="number" placeholder="0"/></div></div>
-        <div class="fr2"><div class="fr"><div class="fl2">Assign To</div><select class="fsel" id="man-assign"><option value="">Unassigned</option></select></div><div class="fr"><div class="fl2">Priority</div><select class="fsel" id="man-pri"><option value="medium">Medium</option><option value="high">High</option><option value="low">Low</option></select></div></div>
+        <div class="fr2"><div class="fr"><div class="fl2">Category / Industry</div><select class="fsel" id="man-category"><option value="">— Select Category —</option><option>Real Estate</option><option>Medical / Clinic</option><option>Travel / Tourism</option><option>Education</option><option>Finance / Insurance</option><option>Retail / Shop</option><option>IT / Software</option><option>Manufacturing</option><option>Other</option></select></div><div class="fr"><div class="fl2">Product / Service</div><input class="finp" id="man-product" placeholder="e.g. Health Plan"/></div></div>
+        <div class="fr2"><div class="fr"><div class="fl2">City</div><input class="finp" id="man-city" placeholder="City"/></div><div class="fr"><div class="fl2">Lead Source</div><select class="fsel" id="man-source"><option value="">Unknown</option><option>Website</option><option>WhatsApp</option><option>Reference</option><option>Cold Call</option><option>Exhibition</option><option>Social Media</option><option>Email Campaign</option><option>Other</option></select></div></div>
+        <div class="fr2"><div class="fr"><div class="fl2">Deal Value (₹)</div><input class="finp" id="man-deal" type="number" placeholder="0"/></div><div class="fr"><div class="fl2">Priority</div><select class="fsel" id="man-pri"><option value="medium">Medium</option><option value="high">High</option><option value="low">Low</option></select></div></div>
+        <div class="fr"><div class="fl2">Assign To</div><select class="fsel" id="man-assign"><option value="">Unassigned</option></select></div>
         <div class="fr"><div class="fl2">Remark</div><textarea class="ftxt" id="man-note" placeholder="Initial note…" style="min-height:60px"></textarea></div>
         <button class="btn btn-p" onclick="addManualLead()">+ Add Lead</button>
       </div>
@@ -457,7 +456,10 @@ td{padding:10px 13px;font-size:13px;vertical-align:middle;}
         <div class="fr"><div class="fl2">Lead Source</div><select class="fsel" id="up-source"><option value="">Unknown</option><option>Website</option><option>WhatsApp</option><option>Reference</option><option>Cold Call</option><option>Exhibition</option><option>Social Media</option><option>Email Campaign</option><option>Other</option></select></div>
       </div>
       <div class="fr2">
+        <div class="fr"><div class="fl2">Category / Industry</div><select class="fsel" id="up-category"><option value="">— None —</option><option>Real Estate</option><option>Medical / Clinic</option><option>Travel / Tourism</option><option>Education</option><option>Finance / Insurance</option><option>Retail / Shop</option><option>IT / Software</option><option>Manufacturing</option><option>Other</option></select></div>
         <div class="fr"><div class="fl2">Initial status</div><select class="fsel" id="up-status"><option value="new">New</option><option value="called">Called</option></select></div>
+      </div>
+      <div class="fr2">
         <div class="fr"><div class="fl2">Priority</div><select class="fsel" id="up-priority"><option value="medium">Medium</option><option value="high">High</option><option value="low">Low</option></select></div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
@@ -481,6 +483,12 @@ td{padding:10px 13px;font-size:13px;vertical-align:middle;}
       </select>
       <select class="sel" id="f-emp" onchange="loadLeads(true)"><option value="">All employees</option></select>
       <select class="sel" id="f-pri" onchange="loadLeads(true)"><option value="">All priorities</option><option>high</option><option>medium</option><option>low</option></select>
+      <select class="sel" id="f-category" onchange="loadLeads(true)">
+        <option value="">All categories</option>
+        <option>Real Estate</option><option>Medical / Clinic</option><option>Travel / Tourism</option>
+        <option>Education</option><option>Finance / Insurance</option><option>Retail / Shop</option>
+        <option>IT / Software</option><option>Manufacturing</option><option>Other</option>
+      </select>
       <select class="sel" id="f-source" onchange="loadLeads(true)"><option value="">All sources</option><option>Website</option><option>WhatsApp</option><option>Reference</option><option>Cold Call</option><option>Exhibition</option><option>Social Media</option><option>Email Campaign</option><option>Other</option></select>
       <select class="sel" id="f-followup" onchange="loadLeads(true)">
         <option value="">All follow-ups</option>
@@ -501,17 +509,15 @@ td{padding:10px 13px;font-size:13px;vertical-align:middle;}
       <button class="btn btn-r btn-sm" onclick="bulkMarkJunk()">🗑 Mark Junk</button>
       <span id="selected-count" style="font-size:12px;color:var(--text3)"></span>
     </div>
-    <!-- Desktop table -->
     <div class="tw" id="leads-table-wrap">
       <table><thead><tr>
         <th><input type="checkbox" id="chk-all" onchange="toggleAllChk(this)"/></th>
         <th>Lead / Company</th><th>Phone</th><th>Email</th><th>Address</th>
-        <th>Source</th><th>Product</th><th>Priority</th><th>Score</th>
+        <th>Category</th><th>Source</th><th>Product</th><th>Priority</th><th>Score</th>
         <th>Assigned</th><th>Status</th><th>Follow-up</th>
         <th>Deal ₹</th><th>Calls</th><th>Last Remark</th><th>Actions</th>
       </tr></thead><tbody id="tb-all"></tbody></table>
     </div>
-    <!-- Mobile cards -->
     <div id="leads-cards-wrap" style="display:none;padding:12px"></div>
     <div class="pgbar" id="pg-all"></div>
   </div>
@@ -534,6 +540,7 @@ td{padding:10px 13px;font-size:13px;vertical-align:middle;}
 
 <!-- ████ EMPLOYEES ████ -->
 <div class="page" id="page-emps">
+  <div style="display:flex;justify-content:flex-end;margin-bottom:14px"><button class="btn btn-p" onclick="openOv('ov-emp')">+ Add Employee</button></div>
   <div class="egrid" id="emp-grid"></div>
 </div>
 
@@ -547,6 +554,9 @@ td{padding:10px 13px;font-size:13px;vertical-align:middle;}
   <div class="g2" style="margin-top:16px">
     <div class="card"><div class="card-h"><div class="card-t">📥 Lead Sources</div></div><div class="card-b" id="rep-sources"></div></div>
     <div class="card"><div class="card-h"><div class="card-t">💰 Deal Pipeline</div></div><div class="card-b" id="rep-deals"></div></div>
+  </div>
+  <div class="g2" style="margin-top:16px">
+    <div class="card"><div class="card-h"><div class="card-t">🏷️ Leads by Category</div></div><div class="card-b" id="rep-categories"></div></div>
   </div>
 </div>
 
@@ -581,11 +591,9 @@ td{padding:10px 13px;font-size:13px;vertical-align:middle;}
       <select class="sel" id="f-my-pri" onchange="loadMyLeads(true)"><option value="">All priorities</option><option>high</option><option>medium</option><option>low</option></select>
       <select class="sel" id="f-my-followup" onchange="loadMyLeads(true)"><option value="">All follow-ups</option><option value="today">Due today</option><option value="overdue">Overdue</option></select>
     </div>
-    <!-- Desktop table -->
     <div class="tw" id="myleads-table-wrap">
-      <table><thead><tr><th>Lead / Company</th><th>Phone</th><th>Product</th><th>Source</th><th>Score</th><th>Priority</th><th>Status</th><th>Follow-up</th><th>Deal ₹</th><th>Calls</th><th>Last Remark</th><th>Actions</th></tr></thead><tbody id="tb-my"></tbody></table>
+      <table><thead><tr><th>Lead / Company</th><th>Phone</th><th>Category</th><th>Product</th><th>Source</th><th>Score</th><th>Priority</th><th>Status</th><th>Follow-up</th><th>Deal ₹</th><th>Calls</th><th>Last Remark</th><th>Actions</th></tr></thead><tbody id="tb-my"></tbody></table>
     </div>
-    <!-- Mobile cards -->
     <div id="myleads-cards-wrap" style="display:none;padding:12px"></div>
     <div class="pgbar" id="pg-my"></div>
   </div>
@@ -633,10 +641,11 @@ td{padding:10px 13px;font-size:13px;vertical-align:middle;}
     <div class="fr2"><div class="fr"><div class="fl2">Company Name</div><input class="finp" id="lm-company" placeholder="Organisation / Company"/></div><div class="fr"><div class="fl2">WhatsApp</div><input class="finp" id="lm-whatsapp" placeholder="If different from phone"/></div></div>
     <div class="fr"><div class="fl2">Address</div><input class="finp" id="lm-address" placeholder="Full address"/></div>
     <div class="fr2"><div class="fr"><div class="fl2">Email</div><input class="finp" id="lm-email" placeholder="email@example.com"/></div><div class="fr"><div class="fl2">City</div><input class="finp" id="lm-city" placeholder="City"/></div></div>
-    <div class="fr2"><div class="fr"><div class="fl2">Product / Service</div><input class="finp" id="lm-product" placeholder="e.g. Health Plan"/></div><div class="fr"><div class="fl2">Lead Source</div><select class="fsel" id="lm-source"><option value="">Unknown</option><option>Website</option><option>WhatsApp</option><option>Reference</option><option>Cold Call</option><option>Exhibition</option><option>Social Media</option><option>Email Campaign</option><option>Other</option></select></div></div>
-    <div class="fr2"><div class="fr"><div class="fl2">Deal Value (₹)</div><input class="finp" id="lm-deal" type="number" placeholder="0"/></div><div class="fr"><div class="fl2">Follow-up Date</div><input class="finp" id="lm-followup" type="date"/></div></div>
+    <div class="fr2"><div class="fr"><div class="fl2">Category / Industry</div><select class="fsel" id="lm-category"><option value="">— Select Category —</option><option>Real Estate</option><option>Medical / Clinic</option><option>Travel / Tourism</option><option>Education</option><option>Finance / Insurance</option><option>Retail / Shop</option><option>IT / Software</option><option>Manufacturing</option><option>Other</option></select></div><div class="fr"><div class="fl2">Product / Service</div><input class="finp" id="lm-product" placeholder="e.g. Health Plan"/></div></div>
+    <div class="fr2"><div class="fr"><div class="fl2">Lead Source</div><select class="fsel" id="lm-source"><option value="">Unknown</option><option>Website</option><option>WhatsApp</option><option>Reference</option><option>Cold Call</option><option>Exhibition</option><option>Social Media</option><option>Email Campaign</option><option>Other</option></select></div><div class="fr"><div class="fl2">Deal Value (₹)</div><input class="finp" id="lm-deal" type="number" placeholder="0"/></div></div>
+    <div class="fr2"><div class="fr"><div class="fl2">Follow-up Date</div><input class="finp" id="lm-followup" type="date"/></div><div class="fr"><div class="fl2">Lead Score</div><select class="fsel" id="lm-score"><option value="warm">Warm</option><option value="hot">🔥 Hot</option><option value="cold">Cold</option></select></div></div>
     <div class="fr2" id="lm-assign-row"><div class="fr"><div class="fl2">Assign to</div><select class="fsel" id="lm-assign"><option value="">Unassigned</option></select></div><div class="fr"><div class="fl2">Priority</div><select class="fsel" id="lm-pri"><option value="medium">Medium</option><option value="high">High</option><option value="low">Low</option></select></div></div>
-    <div class="fr2"><div class="fr"><div class="fl2">Status</div><select class="fsel" id="lm-status"><option value="new">New</option><option value="called">Called</option><option value="interested">Interested</option><option value="callback">Callback</option><option value="notinterested">Not Interested</option><option value="closed">Closed</option><option value="junk">Junk</option></select></div><div class="fr"><div class="fl2">Lead Score</div><select class="fsel" id="lm-score"><option value="warm">Warm</option><option value="hot">🔥 Hot</option><option value="cold">Cold</option></select></div></div>
+    <div class="fr"><div class="fl2">Status</div><select class="fsel" id="lm-status"><option value="new">New</option><option value="called">Called</option><option value="interested">Interested</option><option value="callback">Callback</option><option value="notinterested">Not Interested</option><option value="closed">Closed</option><option value="junk">Junk</option></select></div>
     <div class="fr"><div class="fl2">Remark / Note</div><textarea class="ftxt" id="lm-note" placeholder="Add note…"></textarea></div>
   </div>
   <div id="lm-pane-history" style="display:none">
@@ -697,100 +706,64 @@ td{padding:10px 13px;font-size:13px;vertical-align:middle;}
 
 <!-- ═══════════════════ JAVASCRIPT ═══════════════════ -->
 <script>
-// ─────────────────────────────────────────
-// SUPABASE
-// ─────────────────────────────────────────
 const SUPA_URL = 'https://afejulfbqzsrfxancjyd.supabase.co';
 const SUPA_KEY = 'sb_publishable_NcifD9D1MJLZjD7A-wDCdw_-G1iQQDo';
 
-async function supa(path, method='GET', body=null, params=''){
-  const url = `${SUPA_URL}/rest/v1/${path}${params?'?'+params:''}`;
-  const h = {
-    'apikey': SUPA_KEY,
-    'Authorization': 'Bearer ' + SUPA_KEY,
-    'Content-Type': 'application/json',
-    'Prefer': (method==='POST'||method==='PATCH'||method==='DELETE') ? 'return=representation' : 'count=exact'
-  };
-  const r = await fetch(url, {method, headers:h, body:body?JSON.stringify(body):null});
-  if(!r.ok){ const err=await r.text(); throw new Error(err); }
-  const ct = r.headers.get('content-type')||'';
-  if(ct.includes('json')) return r.json();
+async function supa(path,method='GET',body=null,params=''){
+  const url=`${SUPA_URL}/rest/v1/${path}${params?'?'+params:''}`;
+  const h={'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':(method==='POST'||method==='PATCH'||method==='DELETE')?'return=representation':'count=exact'};
+  const r=await fetch(url,{method,headers:h,body:body?JSON.stringify(body):null});
+  if(!r.ok){const err=await r.text();throw new Error(err);}
+  const ct=r.headers.get('content-type')||'';
+  if(ct.includes('json'))return r.json();
   return null;
 }
-async function supaQ(path, params=''){
-  const url = `${SUPA_URL}/rest/v1/${path}${params?'?'+params:''}`;
-  const h = {'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'count=exact'};
-  const r = await fetch(url, {headers:h});
-  const count = parseInt(r.headers.get('content-range')?.split('/')[1]||'0');
-  const data = await r.json();
-  return {data, count};
+async function supaQ(path,params=''){
+  const url=`${SUPA_URL}/rest/v1/${path}${params?'?'+params:''}`;
+  const h={'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'count=exact'};
+  const r=await fetch(url,{headers:h});
+  const count=parseInt(r.headers.get('content-range')?.split('/')[1]||'0');
+  const data=await r.json();
+  return{data,count};
 }
-async function supaRaw(path, method, body, params=''){
-  const url = `${SUPA_URL}/rest/v1/${path}${params?'?'+params:''}`;
-  const r = await fetch(url, {
-    method,
-    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
-    body: body ? JSON.stringify(body) : null
-  });
-  if(!r.ok) throw new Error(await r.text());
+async function supaRaw(path,method,body,params=''){
+  const url=`${SUPA_URL}/rest/v1/${path}${params?'?'+params:''}`;
+  const r=await fetch(url,{method,headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:body?JSON.stringify(body):null});
+  if(!r.ok)throw new Error(await r.text());
   return r;
 }
 
-// ─────────────────────────────────────────
-// STATE
-// ─────────────────────────────────────────
-let S = {
-  user:null, role:'admin',
-  employees:[],
-  page:'',
-  leadsPage:0, callsPage:0, myLeadsPage:0,
-  PAGE_SIZE:50,
-  pending:[], aiPending:[],
-  selectedLeads: new Set(),
-  isMobile: false,
-  _sT:null, _mT:null
-};
+let S={user:null,role:'admin',employees:[],page:'',leadsPage:0,callsPage:0,myLeadsPage:0,PAGE_SIZE:50,pending:[],aiPending:[],selectedLeads:new Set(),isMobile:false,_sT:null,_mT:null};
 let _lr='admin';
 
-// ─────────────────────────────────────────
-// BOOT
-// ─────────────────────────────────────────
+const CATEGORIES=['Real Estate','Medical / Clinic','Travel / Tourism','Education','Finance / Insurance','Retail / Shop','IT / Software','Manufacturing','Other'];
+
 async function boot(){
-  S.isMobile = window.innerWidth <= 900;
-  window.addEventListener('resize', ()=>{ S.isMobile = window.innerWidth<=900; });
-  try {
+  S.isMobile=window.innerWidth<=900;
+  window.addEventListener('resize',()=>{S.isMobile=window.innerWidth<=900;});
+  try{
     await supa('users','GET',null,'limit=1');
     document.getElementById('loader').style.display='none';
     document.getElementById('login').style.display='flex';
-  } catch(e) {
-    document.querySelector('.loader-text').textContent = 'Connection error: '+e.message;
-  }
+  }catch(e){document.querySelector('.loader-text').textContent='Connection error: '+e.message;}
 }
 
-// ─────────────────────────────────────────
-// AUTH
-// ─────────────────────────────────────────
-function setLR(r,el){ _lr=r; document.querySelectorAll('.ltab').forEach(b=>b.classList.toggle('on',b===el)); }
+function setLR(r,el){_lr=r;document.querySelectorAll('.ltab').forEach(b=>b.classList.toggle('on',b===el));}
 async function doLogin(){
-  const em=document.getElementById('le').value.trim(), pw=document.getElementById('lp').value.trim();
+  const em=document.getElementById('le').value.trim(),pw=document.getElementById('lp').value.trim();
   if(!em||!pw){showErr('Enter email and password');return;}
-  const btn=document.getElementById('login-btn');
-  btn.textContent='Signing in…';btn.disabled=true;
-  try {
-    const users = await supa('users','GET',null,`email=eq.${encodeURIComponent(em)}&password=eq.${encodeURIComponent(pw)}&role=eq.${_lr}`);
+  const btn=document.getElementById('login-btn');btn.textContent='Signing in…';btn.disabled=true;
+  try{
+    const users=await supa('users','GET',null,`email=eq.${encodeURIComponent(em)}&password=eq.${encodeURIComponent(pw)}&role=eq.${_lr}`);
     if(!users||!users.length){showErr('Invalid credentials');btn.textContent='Sign In →';btn.disabled=false;return;}
-    S.user=users[0]; S.role=S.user.role;
-    await loadEmployeeCache();
-    launchApp();
-  } catch(e){ showErr('Error: '+e.message); btn.textContent='Sign In →'; btn.disabled=false; }
+    S.user=users[0];S.role=S.user.role;
+    await loadEmployeeCache();launchApp();
+  }catch(e){showErr('Error: '+e.message);btn.textContent='Sign In →';btn.disabled=false;}
 }
-function showErr(msg){ const el=document.getElementById('lerr'); el.textContent=msg; el.style.display='block'; setTimeout(()=>el.style.display='none',4000); }
-async function loadEmployeeCache(){ try{ const d=await supa('users','GET',null,'role=eq.employee&order=name'); S.employees=d||[]; }catch(e){ S.employees=[]; } }
-function doLogout(){ S.user=null; document.getElementById('app').style.display='none'; document.getElementById('login').style.display='flex'; document.getElementById('le').value=''; document.getElementById('lp').value=''; }
+function showErr(msg){const el=document.getElementById('lerr');el.textContent=msg;el.style.display='block';setTimeout(()=>el.style.display='none',4000);}
+async function loadEmployeeCache(){try{const d=await supa('users','GET',null,'role=eq.employee&order=name');S.employees=d||[];}catch(e){S.employees=[];}}
+function doLogout(){S.user=null;document.getElementById('app').style.display='none';document.getElementById('login').style.display='flex';document.getElementById('le').value='';document.getElementById('lp').value='';}
 
-// ─────────────────────────────────────────
-// LAUNCH APP
-// ─────────────────────────────────────────
 function launchApp(){
   document.getElementById('login').style.display='none';
   document.getElementById('app').style.display='block';
@@ -800,75 +773,35 @@ function launchApp(){
   document.getElementById('sb-uname').textContent=S.user.name;
   document.getElementById('sb-urole').textContent=S.role==='admin'?'Administrator':'Sales Employee';
   document.getElementById('sb-role-lbl').textContent=S.role==='admin'?'Admin Panel':'My Workspace';
-  buildNav();
-  populateEmpSelects();
-  // Set default filter: valid leads
-  const fj=document.getElementById('f-junk'); if(fj) fj.value='valid';
+  buildNav();populateEmpSelects();
+  const fj=document.getElementById('f-junk');if(fj)fj.value='valid';
   navTo(S.role==='admin'?'dash':'edash');
 }
 
-// ─────────────────────────────────────────
-// NAVIGATION
-// ─────────────────────────────────────────
-const NAV_ADMIN=[
-  {sec:'Overview'},{id:'dash',ic:'grid',lbl:'Dashboard'},
-  {sec:'Leads'},{id:'upload',ic:'upload',lbl:'Upload / Add Leads'},{id:'all',ic:'list',lbl:'All Leads'},
-  {sec:'Tracking'},{id:'calls',ic:'phone',lbl:'Call Logs'},
-  {sec:'Team'},{id:'emps',ic:'users',lbl:'Employees'},{id:'admins',ic:'shield',lbl:'Manage Admins'},
-  {sec:'Analytics'},{id:'rep',ic:'bar',lbl:'Reports'},
-];
-const NAV_EMP=[
-  {sec:'My Work'},{id:'edash',ic:'grid',lbl:'Dashboard'},{id:'myleads',ic:'list',lbl:'My Leads'},
-  {sec:'Activity'},{id:'mycalls',ic:'phone',lbl:'My Calls'},
-  {sec:'Account'},{id:'profile',ic:'user',lbl:'My Profile'},
-];
-const MOB_ADMIN=[
-  {id:'dash',ic:'grid',lbl:'Home'},{id:'all',ic:'list',lbl:'Leads'},
-  {id:'calls',ic:'phone',lbl:'Calls'},{id:'emps',ic:'users',lbl:'Team'},{id:'rep',ic:'bar',lbl:'Reports'}
-];
-const MOB_EMP=[
-  {id:'edash',ic:'grid',lbl:'Home'},{id:'myleads',ic:'list',lbl:'My Leads'},
-  {id:'mycalls',ic:'phone',lbl:'Calls'},{id:'profile',ic:'user',lbl:'Profile'}
-];
-const ICS={
-  grid:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
-  upload:'<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>',
-  list:'<svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>',
-  phone:'<svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .84h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 8.09a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 15z"/></svg>',
-  users:'<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>',
-  shield:'<svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
-  bar:'<svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
-  user:'<svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
-};
+const NAV_ADMIN=[{sec:'Overview'},{id:'dash',ic:'grid',lbl:'Dashboard'},{sec:'Leads'},{id:'upload',ic:'upload',lbl:'Upload / Add Leads'},{id:'all',ic:'list',lbl:'All Leads'},{sec:'Tracking'},{id:'calls',ic:'phone',lbl:'Call Logs'},{sec:'Team'},{id:'emps',ic:'users',lbl:'Employees'},{id:'admins',ic:'shield',lbl:'Manage Admins'},{sec:'Analytics'},{id:'rep',ic:'bar',lbl:'Reports'}];
+const NAV_EMP=[{sec:'My Work'},{id:'edash',ic:'grid',lbl:'Dashboard'},{id:'myleads',ic:'list',lbl:'My Leads'},{sec:'Activity'},{id:'mycalls',ic:'phone',lbl:'My Calls'},{sec:'Account'},{id:'profile',ic:'user',lbl:'My Profile'}];
+const MOB_ADMIN=[{id:'dash',ic:'grid',lbl:'Home'},{id:'all',ic:'list',lbl:'Leads'},{id:'calls',ic:'phone',lbl:'Calls'},{id:'emps',ic:'users',lbl:'Team'},{id:'rep',ic:'bar',lbl:'Reports'}];
+const MOB_EMP=[{id:'edash',ic:'grid',lbl:'Home'},{id:'myleads',ic:'list',lbl:'My Leads'},{id:'mycalls',ic:'phone',lbl:'Calls'},{id:'profile',ic:'user',lbl:'Profile'}];
+const ICS={grid:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',upload:'<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>',list:'<svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>',phone:'<svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .84h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 8.09a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 15z"/></svg>',users:'<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>',shield:'<svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',bar:'<svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',user:'<svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'};
+
 function buildNav(){
   const items=S.role==='admin'?NAV_ADMIN:NAV_EMP;
-  document.getElementById('sb-nav').innerHTML=items.map(n=>{
-    if(n.sec) return `<div class="sb-sec">${n.sec}</div>`;
-    return `<button class="sb-item" id="nav-${n.id}" onclick="navTo('${n.id}')">${ICS[n.ic]||''} ${n.lbl}</button>`;
-  }).join('');
-  // Mobile nav
+  document.getElementById('sb-nav').innerHTML=items.map(n=>{if(n.sec)return`<div class="sb-sec">${n.sec}</div>`;return`<button class="sb-item" id="nav-${n.id}" onclick="navTo('${n.id}')">${ICS[n.ic]||''} ${n.lbl}</button>`;}).join('');
   const mobItems=S.role==='admin'?MOB_ADMIN:MOB_EMP;
   document.getElementById('mob-nav').innerHTML=mobItems.map(n=>`<button class="mob-nav-btn" id="mnav-${n.id}" onclick="navTo('${n.id}')">${ICS[n.ic]||''} ${n.lbl}</button>`).join('');
 }
-const PT={
-  dash:['Dashboard','Sales overview'],upload:['Upload / Add Leads','Import file or paste text'],
-  all:['All Leads','Search & manage every lead'],calls:['Call Logs','Every call logged'],
-  emps:['Employees','Team management'],admins:['Manage Admins','Admin accounts'],rep:['Reports','Analytics & insights'],
-  edash:['My Dashboard','Daily overview'],myleads:['My Leads','Your assigned leads'],
-  mycalls:['My Calls','Your call history'],profile:['My Profile','Account & stats'],
-};
+const PT={dash:['Dashboard','Sales overview'],upload:['Upload / Add Leads','Import file or paste text'],all:['All Leads','Search & manage every lead'],calls:['Call Logs','Every call logged'],emps:['Employees','Team management'],admins:['Manage Admins','Admin accounts'],rep:['Reports','Analytics & insights'],edash:['My Dashboard','Daily overview'],myleads:['My Leads','Your assigned leads'],mycalls:['My Calls','Your call history'],profile:['My Profile','Account & stats']};
 function navTo(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.sb-item,.mob-nav-btn').forEach(n=>n.classList.remove('on'));
-  const pg=document.getElementById('page-'+page); if(pg)pg.classList.add('on');
-  const nv=document.getElementById('nav-'+page); if(nv)nv.classList.add('on');
-  const mnv=document.getElementById('mnav-'+page); if(mnv)mnv.classList.add('on');
-  S.page=page; S.selectedLeads.clear(); updateSelCount();
+  const pg=document.getElementById('page-'+page);if(pg)pg.classList.add('on');
+  const nv=document.getElementById('nav-'+page);if(nv)nv.classList.add('on');
+  const mnv=document.getElementById('mnav-'+page);if(mnv)mnv.classList.add('on');
+  S.page=page;S.selectedLeads.clear();updateSelCount();
   const pt=PT[page]||[page,''];
   document.getElementById('tb-t').textContent=pt[0];
   document.getElementById('tb-s').textContent=pt[1];
-  closeSB();
-  renderPage(page);
+  closeSB();renderPage(page);
 }
 function renderPage(p){
   if(p==='dash')rDash();
@@ -883,26 +816,14 @@ function renderPage(p){
   else if(p==='profile')rProfile();
 }
 
-// ─────────────────────────────────────────
-// ADMIN DASHBOARD
-// ─────────────────────────────────────────
+// ─── ADMIN DASHBOARD ───
 async function rDash(){
-  try {
+  try{
     const today=new Date().toISOString().slice(0,10);
-    const [total,closed,hot,newL,callsD,todayF,overdueF,weekCalls] = await Promise.all([
-      supaQ('leads','status=neq.junk&select=id'),
-      supaQ('leads','status=eq.closed&select=id'),
-      supaQ('leads','status=eq.interested&select=id'),
-      supaQ('leads','status=eq.new&select=id'),
-      supaQ('call_logs','select=id'),
-      supaQ('leads',`followup_date=eq.${today}&status=not.in.(closed,junk)&select=id`),
-      supaQ('leads',`followup_date=lt.${today}&status=not.in.(closed,junk)&select=id`),
-      supaQ('call_logs',`created_at=gte.${new Date(Date.now()-7*86400000).toISOString().slice(0,10)}&select=id`),
-    ]);
-    // Alerts
+    const[total,closed,hot,newL,callsD,todayF,overdueF,weekCalls]=await Promise.all([supaQ('leads','status=neq.junk&select=id'),supaQ('leads','status=eq.closed&select=id'),supaQ('leads','status=eq.interested&select=id'),supaQ('leads','status=eq.new&select=id'),supaQ('call_logs','select=id'),supaQ('leads',`followup_date=eq.${today}&status=not.in.(closed,junk)&select=id`),supaQ('leads',`followup_date=lt.${today}&status=not.in.(closed,junk)&select=id`),supaQ('call_logs',`created_at=gte.${new Date(Date.now()-7*86400000).toISOString().slice(0,10)}&select=id`)]);
     const alerts=[];
-    if(overdueF.count>0) alerts.push(`<div class="alert-banner urgent">⚠️ <strong>${overdueF.count} overdue follow-ups!</strong> These leads need immediate attention. <button onclick="document.getElementById('f-followup').value='overdue';navTo('all');setTimeout(()=>loadLeads(true),100)">View Now</button></div>`);
-    if(todayF.count>0) alerts.push(`<div class="alert-banner">🔔 <strong>${todayF.count} follow-ups due today.</strong> Keep the momentum going! <button onclick="document.getElementById('f-followup').value='today';navTo('all');setTimeout(()=>loadLeads(true),100)" style="background:var(--amber)">View</button></div>`);
+    if(overdueF.count>0)alerts.push(`<div class="alert-banner urgent">⚠️ <strong>${overdueF.count} overdue follow-ups!</strong> These leads need immediate attention. <button onclick="document.getElementById('f-followup').value='overdue';navTo('all');setTimeout(()=>loadLeads(true),100)">View Now</button></div>`);
+    if(todayF.count>0)alerts.push(`<div class="alert-banner">🔔 <strong>${todayF.count} follow-ups due today.</strong> Keep the momentum going! <button onclick="document.getElementById('f-followup').value='today';navTo('all');setTimeout(()=>loadLeads(true),100)" style="background:var(--amber)">View</button></div>`);
     document.getElementById('adash-alerts').innerHTML=alerts.join('');
     const t=total.count,cl=closed.count,h=hot.count,nw=newL.count;
     document.getElementById('adash-s').innerHTML=`
@@ -910,66 +831,47 @@ async function rDash(){
       <div class="stat am"><div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg></div><div class="stat-v">${nw}</div><div class="stat-l">New / Pending</div></div>
       <div class="stat gr"><div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg></div><div class="stat-v">${h}</div><div class="stat-l">Interested 🔥</div></div>
       <div class="stat pu"><div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div><div class="stat-v">${cl}</div><div class="stat-l">Closed (${t?Math.round(cl/t*100):0}%)</div></div>`;
-    // Status breakdown
     const sts=[['new','New','var(--blue)'],['called','Called','var(--amber)'],['interested','Interested','var(--green)'],['callback','Callback','var(--purple)'],['notinterested','Not Interested','var(--red)'],['closed','Closed','#22c55e']];
     const counts=await Promise.all(sts.map(s=>supaQ('leads',`status=eq.${s[0]}&select=id`)));
     document.getElementById('adash-br').innerHTML=sts.map((s,i)=>{const c=counts[i].count,pct=t?Math.round(c/t*100):0;return`<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px;color:var(--text2)"><span>${s[1]}</span><span style="font-family:var(--mono)">${c.toLocaleString()} (${pct}%)</span></div><div class="pb"><div class="pf" style="width:${pct}%;background:${s[2]}"></div></div></div>`;}).join('');
-    // Team leaderboard
-    const empStats=await Promise.all(S.employees.map(async e=>{
-      const [l,cl2,c]=await Promise.all([supaQ('leads',`assigned_to=eq.${e.id}&select=id`),supaQ('leads',`assigned_to=eq.${e.id}&status=eq.closed&select=id`),supaQ('call_logs',`emp_id=eq.${e.id}&created_at=gte.${today}&select=id`)]);
-      return{...e,leads:l.count,closed:cl2.count,todayCalls:c.count};
-    }));
+    const empStats=await Promise.all(S.employees.map(async e=>{const[l,cl2,c]=await Promise.all([supaQ('leads',`assigned_to=eq.${e.id}&select=id`),supaQ('leads',`assigned_to=eq.${e.id}&status=eq.closed&select=id`),supaQ('call_logs',`emp_id=eq.${e.id}&created_at=gte.${today}&select=id`)]);return{...e,leads:l.count,closed:cl2.count,todayCalls:c.count};}));
     empStats.sort((a,b)=>b.closed-a.closed);
-    document.getElementById('adash-team').innerHTML=empStats.length?empStats.map((e,i)=>{
-      const pct=e.leads?Math.round(e.closed/e.leads*100):0;
-      return`<div style="margin-bottom:14px;display:flex;align-items:center;gap:8px"><span style="font-size:14px">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'  '}</span><div style="flex:1"><div style="display:flex;align-items:center;gap:7px;margin-bottom:3px"><span style="width:7px;height:7px;border-radius:50%;background:${e.color||'#0ea5e9'}"></span><span style="font-size:12.5px;font-weight:600">${esc(e.name)}</span><span style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-left:auto">${e.closed}/${e.leads} · ${pct}%</span></div><div class="pb"><div class="pf" style="width:${pct}%;background:${e.color||'#0ea5e9'}"></div></div></div><div style="text-align:center;font-family:var(--mono);font-size:11px;color:var(--cyan);min-width:40px">📞${e.todayCalls}</div></div>`;
-    }).join(''):'<div class="empty"><div class="empty-i">👥</div>No employees yet</div>';
-    // Today's follow-ups
+    document.getElementById('adash-team').innerHTML=empStats.length?empStats.map((e,i)=>{const pct=e.leads?Math.round(e.closed/e.leads*100):0;return`<div style="margin-bottom:14px;display:flex;align-items:center;gap:8px"><span style="font-size:14px">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'  '}</span><div style="flex:1"><div style="display:flex;align-items:center;gap:7px;margin-bottom:3px"><span style="width:7px;height:7px;border-radius:50%;background:${e.color||'#0ea5e9'}"></span><span style="font-size:12.5px;font-weight:600">${esc(e.name)}</span><span style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-left:auto">${e.closed}/${e.leads} · ${pct}%</span></div><div class="pb"><div class="pf" style="width:${pct}%;background:${e.color||'#0ea5e9'}"></div></div></div><div style="text-align:center;font-family:var(--mono);font-size:11px;color:var(--cyan);min-width:40px">📞${e.todayCalls}</div></div>`;}).join(''):'<div class="empty"><div class="empty-i">👥</div>No employees yet</div>';
     const followupLeads=await supa('leads','GET',null,`followup_date=eq.${today}&status=not.in.(closed,junk)&limit=5&select=id,name,company,phone,status,assigned_to`);
     document.getElementById('adash-followups').innerHTML=(followupLeads&&followupLeads.length)?followupLeads.map(l=>{const emp=S.employees.find(e=>e.id===l.assigned_to);return`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)"><div style="flex:1"><div style="font-size:13px;font-weight:600">${esc(l.name)}</div><div style="font-size:11px;color:var(--text3)">${esc(l.company||'')} ${emp?'· '+esc(emp.name):''}</div></div><span class="bdg bdg-${l.status}">${sLabel(l.status)}</span><a class="cbtn" style="padding:3px 8px;font-size:10px" href="tel:${(l.phone||'').replace(/\D/g,'')}">📞</a></div>`;}).join(''):'<div class="empty" style="padding:20px"><div class="empty-i">✅</div><div class="empty-t">No follow-ups today</div></div>';
-    // Week activity
-    document.getElementById('adash-week').innerHTML=`
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
-        <div style="background:var(--bg2);border-radius:var(--r);padding:12px;text-align:center"><div style="font-family:var(--mono);font-size:20px;color:var(--cyan)">${weekCalls.count}</div><div style="font-size:10.5px;color:var(--text3);margin-top:3px">Calls this week</div></div>
-        <div style="background:var(--bg2);border-radius:var(--r);padding:12px;text-align:center"><div style="font-family:var(--mono);font-size:20px;color:var(--amber)">${todayF.count}</div><div style="font-size:10.5px;color:var(--text3);margin-top:3px">Due today</div></div>
-        <div style="background:var(--bg2);border-radius:var(--r);padding:12px;text-align:center"><div style="font-family:var(--mono);font-size:20px;color:var(--red)">${overdueF.count}</div><div style="font-size:10.5px;color:var(--text3);margin-top:3px">Overdue</div></div>
-      </div>`;
-  } catch(e){ toast('Dashboard error: '+e.message,'e'); }
+    document.getElementById('adash-week').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"><div style="background:var(--bg2);border-radius:var(--r);padding:12px;text-align:center"><div style="font-family:var(--mono);font-size:20px;color:var(--cyan)">${weekCalls.count}</div><div style="font-size:10.5px;color:var(--text3);margin-top:3px">Calls this week</div></div><div style="background:var(--bg2);border-radius:var(--r);padding:12px;text-align:center"><div style="font-family:var(--mono);font-size:20px;color:var(--amber)">${todayF.count}</div><div style="font-size:10.5px;color:var(--text3);margin-top:3px">Due today</div></div><div style="background:var(--bg2);border-radius:var(--r);padding:12px;text-align:center"><div style="font-family:var(--mono);font-size:20px;color:var(--red)">${overdueF.count}</div><div style="font-size:10.5px;color:var(--text3);margin-top:3px">Overdue</div></div></div>`;
+  }catch(e){toast('Dashboard error: '+e.message,'e');}
 }
 
-// ─────────────────────────────────────────
-// LEADS TABLE
-// ─────────────────────────────────────────
+// ─── LEADS TABLE ───
 async function loadLeads(reset=false){
-  if(reset) S.leadsPage=0;
+  if(reset)S.leadsPage=0;
   const q=document.getElementById('q-all')?.value||'';
   const status=document.getElementById('f-status')?.value||'';
   const emp=document.getElementById('f-emp')?.value||'';
   const pri=document.getElementById('f-pri')?.value||'';
   const src=document.getElementById('f-source')?.value||'';
+  const cat=document.getElementById('f-category')?.value||'';
   const fu=document.getElementById('f-followup')?.value||'';
   const junk=document.getElementById('f-junk')?.value;
   const today=new Date().toISOString().slice(0,10);
   const offset=S.leadsPage*S.PAGE_SIZE;
   let params=`order=created_at.desc&limit=${S.PAGE_SIZE}&offset=${offset}&select=*`;
-  if(status) params+=`&status=eq.${status}`;
-  else if(junk==='valid') params+=`&status=neq.junk`;
-  else if(junk==='junk') params+=`&status=eq.junk`;
-  if(emp) params+=`&assigned_to=eq.${emp}`;
-  if(pri) params+=`&priority=eq.${pri}`;
-  if(src) params+=`&source=eq.${encodeURIComponent(src)}`;
-  if(fu==='today') params+=`&followup_date=eq.${today}`;
-  else if(fu==='overdue') params+=`&followup_date=lt.${today}`;
-  else if(fu==='week') params+=`&followup_date=gte.${today}&followup_date=lte.${new Date(Date.now()+7*86400000).toISOString().slice(0,10)}`;
-  if(q) params+=`&or=(name.ilike.*${encodeURIComponent(q)}*,phone.ilike.*${encodeURIComponent(q)}*,email.ilike.*${encodeURIComponent(q)}*,company.ilike.*${encodeURIComponent(q)}*,city.ilike.*${encodeURIComponent(q)}*)`;
-  try {
-    const {data:leads,count}=await supaQ('leads',params);
-    if(S.isMobile) renderLeadCards(leads||[],count,'all',S.leadsPage);
-    else renderLeadsTable(leads||[],count,'all',S.leadsPage);
-  } catch(e){ toast('Error: '+e.message,'e'); }
+  if(status)params+=`&status=eq.${status}`;
+  else if(junk==='valid')params+=`&status=neq.junk`;
+  else if(junk==='junk')params+=`&status=eq.junk`;
+  if(emp)params+=`&assigned_to=eq.${emp}`;
+  if(pri)params+=`&priority=eq.${pri}`;
+  if(src)params+=`&source=eq.${encodeURIComponent(src)}`;
+  if(cat)params+=`&category=eq.${encodeURIComponent(cat)}`;
+  if(fu==='today')params+=`&followup_date=eq.${today}`;
+  else if(fu==='overdue')params+=`&followup_date=lt.${today}`;
+  else if(fu==='week')params+=`&followup_date=gte.${today}&followup_date=lte.${new Date(Date.now()+7*86400000).toISOString().slice(0,10)}`;
+  if(q)params+=`&or=(name.ilike.*${encodeURIComponent(q)}*,phone.ilike.*${encodeURIComponent(q)}*,email.ilike.*${encodeURIComponent(q)}*,company.ilike.*${encodeURIComponent(q)}*,city.ilike.*${encodeURIComponent(q)}*)`;
+  try{const{data:leads,count}=await supaQ('leads',params);if(S.isMobile)renderLeadCards(leads||[],count,'all',S.leadsPage);else renderLeadsTable(leads||[],count,'all',S.leadsPage);}catch(e){toast('Error: '+e.message,'e');}
 }
 async function loadMyLeads(reset=false){
-  if(reset) S.myLeadsPage=0;
+  if(reset)S.myLeadsPage=0;
   const q=document.getElementById('q-my')?.value||'';
   const status=document.getElementById('f-my-status')?.value||'';
   const pri=document.getElementById('f-my-pri')?.value||'';
@@ -977,27 +879,22 @@ async function loadMyLeads(reset=false){
   const today=new Date().toISOString().slice(0,10);
   const offset=S.myLeadsPage*S.PAGE_SIZE;
   let params=`assigned_to=eq.${S.user.id}&status=neq.junk&order=created_at.desc&limit=${S.PAGE_SIZE}&offset=${offset}&select=*`;
-  if(status) params=`assigned_to=eq.${S.user.id}&status=eq.${status}&order=created_at.desc&limit=${S.PAGE_SIZE}&offset=${offset}&select=*`;
-  if(pri) params+=`&priority=eq.${pri}`;
-  if(fu==='today') params+=`&followup_date=eq.${today}`;
-  else if(fu==='overdue') params+=`&followup_date=lt.${today}`;
-  if(q) params+=`&or=(name.ilike.*${encodeURIComponent(q)}*,phone.ilike.*${encodeURIComponent(q)}*,company.ilike.*${encodeURIComponent(q)}*)`;
-  try {
-    const {data:leads,count}=await supaQ('leads',params);
-    if(S.isMobile) renderLeadCards(leads||[],count,'my',S.myLeadsPage);
-    else renderLeadsTable(leads||[],count,'my',S.myLeadsPage);
-  } catch(e){ toast('Error: '+e.message,'e'); }
+  if(status)params=`assigned_to=eq.${S.user.id}&status=eq.${status}&order=created_at.desc&limit=${S.PAGE_SIZE}&offset=${offset}&select=*`;
+  if(pri)params+=`&priority=eq.${pri}`;
+  if(fu==='today')params+=`&followup_date=eq.${today}`;
+  else if(fu==='overdue')params+=`&followup_date=lt.${today}`;
+  if(q)params+=`&or=(name.ilike.*${encodeURIComponent(q)}*,phone.ilike.*${encodeURIComponent(q)}*,company.ilike.*${encodeURIComponent(q)}*)`;
+  try{const{data:leads,count}=await supaQ('leads',params);if(S.isMobile)renderLeadCards(leads||[],count,'my',S.myLeadsPage);else renderLeadsTable(leads||[],count,'my',S.myLeadsPage);}catch(e){toast('Error: '+e.message,'e');}
 }
 
 function renderLeadsTable(leads,total,mode,page){
   const isA=S.role==='admin';
   const today=new Date().toISOString().slice(0,10);
-  // Show table, hide cards
   const tw=document.getElementById(mode==='all'?'leads-table-wrap':'myleads-table-wrap');
   const cw=document.getElementById(mode==='all'?'leads-cards-wrap':'myleads-cards-wrap');
   if(tw)tw.style.display='';if(cw)cw.style.display='none';
   const tbody=document.getElementById('tb-'+mode);
-  if(!leads.length){tbody.innerHTML=`<tr><td colspan="16"><div class="empty"><div class="empty-i">🔍</div><div class="empty-t">No leads found</div></div></td></tr>`;document.getElementById('pg-'+mode).innerHTML='';return;}
+  if(!leads.length){tbody.innerHTML=`<tr><td colspan="17"><div class="empty"><div class="empty-i">🔍</div><div class="empty-t">No leads found</div></div></td></tr>`;document.getElementById('pg-'+mode).innerHTML='';return;}
   tbody.innerHTML=leads.map(lead=>{
     const emp=S.employees.find(e=>e.id===lead.assigned_to);
     const fu=lead.followup_date;
@@ -1005,6 +902,7 @@ function renderLeadsTable(leads,total,mode,page){
     const scoreHtml=scoreBar(lead.score||'warm');
     const assignCol=isA?`<td>${emp?`<span style="display:inline-flex;align-items:center;gap:4px;font-size:11.5px"><span style="width:7px;height:7px;border-radius:50%;background:${emp.color||'#0ea5e9'}"></span>${esc(emp.name)}</span>`:'<span style="color:var(--text3);font-size:11px">Unassigned</span>'}</td>`:'';
     const dealVal=lead.deal_value?`<span style="font-family:var(--mono);font-size:11.5px;color:var(--green)">₹${Number(lead.deal_value).toLocaleString()}</span>`:'—';
+    const catTag=lead.category?`<span class="bdg bdg-cat" style="font-size:10px">${esc(lead.category)}</span>`:'—';
     return`<tr class="${lead.status==='junk'?'junk-row':''}">
       <td><input type="checkbox" class="lead-chk" value="${lead.id}" onchange="toggleLeadChk('${lead.id}',this.checked)"/></td>
       <td>
@@ -1015,6 +913,7 @@ function renderLeadsTable(leads,total,mode,page){
       <td><span class="td-mo" style="color:var(--blue2)">${esc(lead.phone||'')}</span>${lead.whatsapp&&lead.whatsapp!==lead.phone?`<br><span style="font-size:10px;color:#25d366">WA:${esc(lead.whatsapp)}</span>`:''}</td>
       <td class="td-xs">${esc(lead.email||'—')}</td>
       <td class="td-xs" style="max-width:100px">${esc(lead.address||'—')}</td>
+      <td>${catTag}</td>
       <td><span style="font-size:11px;color:var(--text3)">${esc(lead.source||'—')}</span></td>
       <td class="td-xs">${esc(lead.product||'—')}</td>
       <td><span class="bdg bdg-${lead.priority||'medium'}">${lead.priority||'medium'}</span></td>
@@ -1028,8 +927,7 @@ function renderLeadsTable(leads,total,mode,page){
       <td><div class="td-act">
         <a class="cbtn" href="tel:${(lead.phone||'').replace(/\D/g,'')}" onclick="logAutoCall('${lead.id}','${esc(lead.name)}','${esc(lead.phone||'')}')">📞</a>
         <a class="wbtn" href="https://wa.me/${(lead.whatsapp||lead.phone||'').replace(/\D/g,'')}" target="_blank">💬</a>
-        ${isA?`<button class="btn btn-g btn-xs" onclick="openEditLeadObj(${JSON.stringify(lead).replace(/"/g,'&quot;')})">Edit</button>
-        <button class="btn btn-r btn-xs" onclick="delLead('${lead.id}')">Del</button>`
+        ${isA?`<button class="btn btn-g btn-xs" onclick="openEditLeadObj(${JSON.stringify(lead).replace(/"/g,'&quot;')})">Edit</button><button class="btn btn-r btn-xs" onclick="delLead('${lead.id}')">Del</button>`
         :`<button class="btn btn-p btn-xs" onclick="openUpdate('${lead.id}','${esc(lead.name)}','${esc(lead.phone||'')}','${esc(lead.company||'')}','${esc(lead.product||'')}','${esc(lead.city||'')}','${lead.status}','${lead.score||'warm'}')">Update</button>`}
       </div></td>
     </tr>`;
@@ -1050,21 +948,16 @@ function renderLeadCards(leads,total,mode,page){
     const fu=lead.followup_date;
     const fuTag=fu?(fu===today?`<span class="due-today">Today</span>`:fu<today?`<span class="overdue">Overdue</span>`:fu):'';
     return`<div class="lead-card ${lead.status==='junk'?'junk-row':''}">
-      <div class="lead-card-top">
-        <div>
-          <div class="lead-card-name">${esc(lead.name)}</div>
-          ${lead.company?`<div class="lead-card-company">🏢 ${esc(lead.company)}</div>`:''}
-        </div>
-        <span class="bdg bdg-${lead.status}">${sLabel(lead.status)}</span>
-      </div>
+      <div class="lead-card-top"><div><div class="lead-card-name">${esc(lead.name)}</div>${lead.company?`<div class="lead-card-company">🏢 ${esc(lead.company)}</div>`:''}</div><span class="bdg bdg-${lead.status}">${sLabel(lead.status)}</span></div>
       <div class="lead-card-phone">📞 ${esc(lead.phone||'—')}</div>
       <div class="lead-card-meta">
+        ${lead.category?`<span class="bdg bdg-cat" style="font-size:10px">${esc(lead.category)}</span>`:''}
         ${lead.priority?`<span class="bdg bdg-${lead.priority}">${lead.priority}</span>`:''}
-        ${scoreBar(lead.score||'warm')}
-        ${fuTag}
+        ${scoreBar(lead.score||'warm')}${fuTag}
         ${lead.source?`<span style="font-size:11px;color:var(--text3)">${esc(lead.source)}</span>`:''}
         ${emp?`<span style="font-size:11px;color:var(--text2)">👤 ${esc(emp.name)}</span>`:''}
       </div>
+      ${lead.address?`<div style="font-size:11px;color:var(--text3);margin:3px 0">📍 ${esc(lead.address)}</div>`:''}
       ${lead.product?`<div style="font-size:11px;color:var(--text3);margin:3px 0">${esc(lead.product)}</div>`:''}
       ${lead.deal_value?`<div style="font-size:12px;color:var(--green);font-family:var(--mono)">💰 ₹${Number(lead.deal_value).toLocaleString()}</div>`:''}
       <div class="lead-card-actions">
@@ -1083,33 +976,19 @@ function renderPagination(mode,total,page){
   const start=page*S.PAGE_SIZE+1,end=Math.min((page+1)*S.PAGE_SIZE,total);
   const prevFn=mode==='all'?'S.leadsPage--;loadLeads()':'S.myLeadsPage--;loadMyLeads()';
   const nextFn=mode==='all'?'S.leadsPage++;loadLeads()':'S.myLeadsPage++;loadMyLeads()';
-  document.getElementById('pg-'+mode).innerHTML=`
-    <button class="pgbtn" ${page===0?'disabled':''} onclick="${prevFn}">← Prev</button>
-    <span>Page ${page+1}/${Math.max(1,totalPages)} · ${start}–${end} of <strong style="color:var(--text)">${total.toLocaleString()}</strong></span>
-    <button class="pgbtn" ${page>=totalPages-1?'disabled':''} onclick="${nextFn}">Next →</button>`;
+  document.getElementById('pg-'+mode).innerHTML=`<button class="pgbtn" ${page===0?'disabled':''} onclick="${prevFn}">← Prev</button><span>Page ${page+1}/${Math.max(1,totalPages)} · ${start}–${end} of <strong style="color:var(--text)">${total.toLocaleString()}</strong></span><button class="pgbtn" ${page>=totalPages-1?'disabled':''} onclick="${nextFn}">Next →</button>`;
 }
 
-function scoreBar(score){
-  const colors={'hot':'fill-hot','warm':'fill-warm','cold':'fill-cold'};
-  const fills={'hot':3,'warm':2,'cold':1};
-  const c=colors[score]||'fill-warm', f=fills[score]||2;
-  return `<div class="score-bar">${[1,2,3].map(i=>`<div class="score-dot ${i<=f?c:''}"></div>`).join('')}</div>`;
-}
+function scoreBar(score){const colors={'hot':'fill-hot','warm':'fill-warm','cold':'fill-cold'};const fills={'hot':3,'warm':2,'cold':1};const c=colors[score]||'fill-warm',f=fills[score]||2;return`<div class="score-bar">${[1,2,3].map(i=>`<div class="score-dot ${i<=f?c:''}"></div>`).join('')}</div>`;}
 
 async function loadLastRemark(leadId){
-  try{
-    const d=await supa('remarks','GET',null,`lead_id=eq.${leadId}&order=created_at.desc&limit=1&select=text`);
-    const el=document.getElementById('lr-'+leadId);
-    if(el&&d&&d[0]) el.textContent=d[0].text;
-  }catch(e){}
+  try{const d=await supa('remarks','GET',null,`lead_id=eq.${leadId}&order=created_at.desc&limit=1&select=text`);const el=document.getElementById('lr-'+leadId);if(el&&d&&d[0])el.textContent=d[0].text;}catch(e){}
 }
 
-function debounceSearch(){ clearTimeout(S._sT); S._sT=setTimeout(()=>loadLeads(true),400); }
-function debounceMySearch(){ clearTimeout(S._mT); S._mT=setTimeout(()=>loadMyLeads(true),400); }
+function debounceSearch(){clearTimeout(S._sT);S._sT=setTimeout(()=>loadLeads(true),400);}
+function debounceMySearch(){clearTimeout(S._mT);S._mT=setTimeout(()=>loadMyLeads(true),400);}
 
-// Auto-log call when tapping call button
-async function logAutoCall(leadId, name, phone){
-  // Log a "made" call automatically
+async function logAutoCall(leadId,name,phone){
   try{
     const d=await supa(`leads?id=eq.${leadId}`,'GET',null,'select=call_count');
     const cnt=((d&&d[0]?.call_count)||0)+1;
@@ -1119,9 +998,7 @@ async function logAutoCall(leadId, name, phone){
   }catch(e){}
 }
 
-// ─────────────────────────────────────────
-// LEAD MODAL
-// ─────────────────────────────────────────
+// ─── LEAD MODAL ───
 function openAddLead(){
   document.getElementById('lm-t').textContent='Add Lead';
   document.getElementById('lm-id').value='';
@@ -1131,13 +1008,14 @@ function openAddLead(){
   document.getElementById('lm-pri').value='medium';
   document.getElementById('lm-score').value='warm';
   document.getElementById('lm-source').value='';
+  document.getElementById('lm-category').value='';
   document.getElementById('lm-assign').value='';
   document.getElementById('lm-pane-info').style.display='';
   document.getElementById('lm-pane-history').style.display='none';
   openOv('ov-lead');
 }
 function openEditLeadObj(lead){
-  if(typeof lead==='string') lead=JSON.parse(lead);
+  if(typeof lead==='string')lead=JSON.parse(lead);
   document.getElementById('lm-t').textContent='Edit Lead';
   document.getElementById('lm-id').value=lead.id;
   document.getElementById('lm-name').value=lead.name||'';
@@ -1154,6 +1032,7 @@ function openEditLeadObj(lead){
   document.getElementById('lm-pri').value=lead.priority||'medium';
   document.getElementById('lm-score').value=lead.score||'warm';
   document.getElementById('lm-source').value=lead.source||'';
+  document.getElementById('lm-category').value=lead.category||'';
   document.getElementById('lm-assign').value=lead.assigned_to||'';
   document.getElementById('lm-note').value='';
   document.getElementById('lm-pane-info').style.display='';
@@ -1179,44 +1058,16 @@ async function saveLead(){
   const id=document.getElementById('lm-id').value;
   const note=document.getElementById('lm-note').value.trim();
   const assign=document.getElementById('lm-assign').value;
-  const body={
-    name,phone,
-    company:document.getElementById('lm-company').value.trim(),
-    whatsapp:document.getElementById('lm-whatsapp').value.trim(),
-    address:document.getElementById('lm-address').value.trim(),
-    email:document.getElementById('lm-email').value.trim(),
-    city:document.getElementById('lm-city').value.trim(),
-    product:document.getElementById('lm-product').value.trim(),
-    deal_value:parseFloat(document.getElementById('lm-deal').value)||null,
-    followup_date:document.getElementById('lm-followup').value||null,
-    status:document.getElementById('lm-status').value,
-    priority:document.getElementById('lm-pri').value,
-    score:document.getElementById('lm-score').value,
-    source:document.getElementById('lm-source').value||null,
-    assigned_to:assign||null,
-  };
+  const body={name,phone,company:document.getElementById('lm-company').value.trim(),whatsapp:document.getElementById('lm-whatsapp').value.trim(),address:document.getElementById('lm-address').value.trim(),email:document.getElementById('lm-email').value.trim(),city:document.getElementById('lm-city').value.trim(),product:document.getElementById('lm-product').value.trim(),deal_value:parseFloat(document.getElementById('lm-deal').value)||null,followup_date:document.getElementById('lm-followup').value||null,status:document.getElementById('lm-status').value,priority:document.getElementById('lm-pri').value,score:document.getElementById('lm-score').value,source:document.getElementById('lm-source').value||null,category:document.getElementById('lm-category').value||null,assigned_to:assign||null};
   try{
-    if(id){
-      await supa(`leads?id=eq.${id}`,'PATCH',body);
-      if(note) await supa('remarks','POST',{lead_id:id,text:note,by_name:S.user.name,by_id:S.user.id,call_status:'',duration:0});
-      toast('Lead updated ✓','s');
-    } else {
-      const res=await supa('leads','POST',{...body,call_count:0});
-      if(note&&res&&res[0]) await supa('remarks','POST',{lead_id:res[0].id,text:note,by_name:S.user.name,by_id:S.user.id,call_status:'',duration:0});
-      toast('Lead added ✓','s');
-    }
-    closeOv('ov-lead'); loadLeads();
+    if(id){await supa(`leads?id=eq.${id}`,'PATCH',body);if(note)await supa('remarks','POST',{lead_id:id,text:note,by_name:S.user.name,by_id:S.user.id,call_status:'',duration:0});toast('Lead updated ✓','s');}
+    else{const res=await supa('leads','POST',{...body,call_count:0});if(note&&res&&res[0])await supa('remarks','POST',{lead_id:res[0].id,text:note,by_name:S.user.name,by_id:S.user.id,call_status:'',duration:0});toast('Lead added ✓','s');}
+    closeOv('ov-lead');loadLeads();
   }catch(e){toast('Error: '+e.message,'e');}
 }
-async function delLead(id){
-  if(!confirm('Delete this lead?'))return;
-  try{ await supa(`leads?id=eq.${id}`,'DELETE'); toast('Deleted','s'); loadLeads(); }
-  catch(e){toast('Error: '+e.message,'e');}
-}
+async function delLead(id){if(!confirm('Delete this lead?'))return;try{await supa(`leads?id=eq.${id}`,'DELETE');toast('Deleted','s');loadLeads();}catch(e){toast('Error: '+e.message,'e');}}
 
-// ─────────────────────────────────────────
-// EMPLOYEE UPDATE MODAL
-// ─────────────────────────────────────────
+// ─── EMPLOYEE UPDATE MODAL ───
 function openUpdate(id,name,phone,company,product,city,status,score){
   document.getElementById('um-id').value=id;
   document.getElementById('um-status').value=status;
@@ -1243,43 +1094,27 @@ async function saveUpdate(){
     await supa(`leads?id=eq.${id}`,'PATCH',{status,score,call_count:cnt,followup_date:fu});
     await supa('remarks','POST',{lead_id:id,text:note,by_name:S.user.name,by_id:S.user.id,call_status:cs,duration:dur});
     await supa('call_logs','POST',{emp_id:S.user.id,emp_name:S.user.name,lead_id:id,lead_name:lead[0]?.name||'',company:lead[0]?.company||'',phone:lead[0]?.phone||'',status:cs,duration:dur,remark:note});
-    toast('Updated ✓','s');
-    closeOv('ov-upd');
-    loadMyLeads();
-    if(fu) toast(`Follow-up set for ${fu} 📅`,'i');
+    toast('Updated ✓','s');closeOv('ov-upd');loadMyLeads();
+    if(fu)toast(`Follow-up set for ${fu} 📅`,'i');
   }catch(e){toast('Error: '+e.message,'e');}
 }
 async function markJunkFromUpdate(){
   const id=document.getElementById('um-id').value;
   if(!confirm('Mark this lead as junk?'))return;
-  try{
-    await supa(`leads?id=eq.${id}`,'PATCH',{status:'junk'});
-    toast('Marked as junk','am');
-    closeOv('ov-upd');
-    loadMyLeads();
-  }catch(e){toast('Error: '+e.message,'e');}
+  try{await supa(`leads?id=eq.${id}`,'PATCH',{status:'junk'});toast('Marked as junk','am');closeOv('ov-upd');loadMyLeads();}catch(e){toast('Error: '+e.message,'e');}
 }
 
-// ─────────────────────────────────────────
-// SELECTION & BULK JUNK
-// ─────────────────────────────────────────
-function toggleLeadChk(id, checked){ if(checked) S.selectedLeads.add(id); else S.selectedLeads.delete(id); updateSelCount(); }
-function toggleAllChk(cb){ document.querySelectorAll('.lead-chk').forEach(c=>{c.checked=cb.checked;toggleLeadChk(c.value,cb.checked);}); }
-function updateSelCount(){ const el=document.getElementById('selected-count');if(el)el.textContent=S.selectedLeads.size?`${S.selectedLeads.size} selected`:''; }
+// ─── SELECTION & BULK JUNK ───
+function toggleLeadChk(id,checked){if(checked)S.selectedLeads.add(id);else S.selectedLeads.delete(id);updateSelCount();}
+function toggleAllChk(cb){document.querySelectorAll('.lead-chk').forEach(c=>{c.checked=cb.checked;toggleLeadChk(c.value,cb.checked);});}
+function updateSelCount(){const el=document.getElementById('selected-count');if(el)el.textContent=S.selectedLeads.size?`${S.selectedLeads.size} selected`:'';}
 async function bulkMarkJunk(){
   if(!S.selectedLeads.size){toast('Select leads first','e');return;}
   if(!confirm(`Mark ${S.selectedLeads.size} leads as junk?`))return;
-  try{
-    for(const id of S.selectedLeads) await supa(`leads?id=eq.${id}`,'PATCH',{status:'junk'});
-    toast(`${S.selectedLeads.size} leads marked as junk`,'am');
-    S.selectedLeads.clear(); updateSelCount();
-    loadLeads();
-  }catch(e){toast('Error: '+e.message,'e');}
+  try{for(const id of S.selectedLeads)await supa(`leads?id=eq.${id}`,'PATCH',{status:'junk'});toast(`${S.selectedLeads.size} leads marked as junk`,'am');S.selectedLeads.clear();updateSelCount();loadLeads();}catch(e){toast('Error: '+e.message,'e');}
 }
 
-// ─────────────────────────────────────────
-// CALL LOGS
-// ─────────────────────────────────────────
+// ─── CALL LOGS ───
 async function loadCallLogs(){
   const empId=document.getElementById('f-call-emp')?.value||'';
   const dateF=document.getElementById('f-call-date')?.value||'';
@@ -1288,249 +1123,128 @@ async function loadCallLogs(){
   const offset=S.callsPage*S.PAGE_SIZE;
   const today=new Date().toISOString().slice(0,10);
   let params=`order=created_at.desc&limit=${S.PAGE_SIZE}&offset=${offset}&select=*`;
-  if(empId) params=`emp_id=eq.${empId}&`+params;
-  if(callSt) params+=`&status=eq.${callSt}`;
-  if(dateF==='today') params+=`&created_at=gte.${today}`;
-  else if(dateF==='week') params+=`&created_at=gte.${new Date(Date.now()-7*86400000).toISOString().slice(0,10)}`;
-  else if(dateF==='month') params+=`&created_at=gte.${new Date(Date.now()-30*86400000).toISOString().slice(0,10)}`;
-  if(q) params+=`&or=(emp_name.ilike.*${encodeURIComponent(q)}*,lead_name.ilike.*${encodeURIComponent(q)}*)`;
+  if(empId)params=`emp_id=eq.${empId}&`+params;
+  if(callSt)params+=`&status=eq.${callSt}`;
+  if(dateF==='today')params+=`&created_at=gte.${today}`;
+  else if(dateF==='week')params+=`&created_at=gte.${new Date(Date.now()-7*86400000).toISOString().slice(0,10)}`;
+  else if(dateF==='month')params+=`&created_at=gte.${new Date(Date.now()-30*86400000).toISOString().slice(0,10)}`;
+  if(q)params+=`&or=(emp_name.ilike.*${encodeURIComponent(q)}*,lead_name.ilike.*${encodeURIComponent(q)}*)`;
   try{
-    const [total,made,missed,todayC]=await Promise.all([
-      supaQ('call_logs',empId?`emp_id=eq.${empId}&select=id`:'select=id'),
-      supaQ('call_logs',(empId?`emp_id=eq.${empId}&`:'')+'status=eq.made&select=id'),
-      supaQ('call_logs',(empId?`emp_id=eq.${empId}&`:'')+'status=eq.missed&select=id'),
-      supaQ('call_logs',(empId?`emp_id=eq.${empId}&`:'')+'created_at=gte.'+today+'&select=id'),
-    ]);
-    document.getElementById('call-stats').innerHTML=`
-      <div class="stat bl"><div class="stat-ic">${ICS.phone}</div><div class="stat-v">${total.count.toLocaleString()}</div><div class="stat-l">Total calls</div></div>
-      <div class="stat gr"><div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div><div class="stat-v">${made.count}</div><div class="stat-l">Made</div></div>
-      <div class="stat re"><div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="1" y1="1" x2="23" y2="23"/></svg></div><div class="stat-v">${missed.count}</div><div class="stat-l">Missed</div></div>
-      <div class="stat cy"><div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="stat-v">${todayC.count}</div><div class="stat-l">Today</div></div>`;
-    const {data:logs,count}=await supaQ('call_logs',params);
+    const[total,made,missed,todayC]=await Promise.all([supaQ('call_logs',empId?`emp_id=eq.${empId}&select=id`:'select=id'),supaQ('call_logs',(empId?`emp_id=eq.${empId}&`:'')+'status=eq.made&select=id'),supaQ('call_logs',(empId?`emp_id=eq.${empId}&`:'')+'status=eq.missed&select=id'),supaQ('call_logs',(empId?`emp_id=eq.${empId}&`:'')+'created_at=gte.'+today+'&select=id')]);
+    document.getElementById('call-stats').innerHTML=`<div class="stat bl"><div class="stat-ic">${ICS.phone}</div><div class="stat-v">${total.count.toLocaleString()}</div><div class="stat-l">Total calls</div></div><div class="stat gr"><div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div><div class="stat-v">${made.count}</div><div class="stat-l">Made</div></div><div class="stat re"><div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="1" y1="1" x2="23" y2="23"/></svg></div><div class="stat-v">${missed.count}</div><div class="stat-l">Missed</div></div><div class="stat cy"><div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="stat-v">${todayC.count}</div><div class="stat-l">Today</div></div>`;
+    const{data:logs,count}=await supaQ('call_logs',params);
     const tbody=document.getElementById('tb-calls');
     if(!logs||!logs.length){tbody.innerHTML=`<tr><td colspan="8"><div class="empty"><div class="empty-i">📞</div><div class="empty-t">No calls found</div></div></td></tr>`;document.getElementById('pg-calls').innerHTML='';return;}
-    tbody.innerHTML=logs.map(c=>`<tr>
-      <td style="font-family:var(--mono);font-size:11px;color:var(--text2)">${new Date(c.created_at).toLocaleString()}</td>
-      <td class="td-m">${esc(c.emp_name||'')}</td>
-      <td>${esc(c.lead_name||'')}</td>
-      <td style="font-size:11.5px;color:var(--blue2)">${esc(c.company||'—')}</td>
-      <td style="font-family:var(--mono);font-size:12px;color:var(--blue2)">${esc(c.phone||'')}</td>
-      <td><span class="cl-${c.status}">${c.status==='made'?'✅ Made':'❌ Missed'}</span></td>
-      <td style="font-family:var(--mono);font-size:12px">${c.duration?c.duration+'m':'—'}</td>
-      <td class="td-xs">${esc(c.remark||'—')}</td>
-    </tr>`).join('');
+    tbody.innerHTML=logs.map(c=>`<tr><td style="font-family:var(--mono);font-size:11px;color:var(--text2)">${new Date(c.created_at).toLocaleString()}</td><td class="td-m">${esc(c.emp_name||'')}</td><td>${esc(c.lead_name||'')}</td><td style="font-size:11.5px;color:var(--blue2)">${esc(c.company||'—')}</td><td style="font-family:var(--mono);font-size:12px;color:var(--blue2)">${esc(c.phone||'')}</td><td><span class="cl-${c.status}">${c.status==='made'?'✅ Made':'❌ Missed'}</span></td><td style="font-family:var(--mono);font-size:12px">${c.duration?c.duration+'m':'—'}</td><td class="td-xs">${esc(c.remark||'—')}</td></tr>`).join('');
     const totalPages=Math.ceil(count/S.PAGE_SIZE);
-    document.getElementById('pg-calls').innerHTML=count>S.PAGE_SIZE?`
-      <button class="pgbtn" ${S.callsPage===0?'disabled':''} onclick="S.callsPage--;loadCallLogs()">← Prev</button>
-      <span>Page ${S.callsPage+1}/${Math.max(1,totalPages)} · ${count.toLocaleString()} calls</span>
-      <button class="pgbtn" ${S.callsPage>=totalPages-1?'disabled':''} onclick="S.callsPage++;loadCallLogs()">Next →</button>`:'';
+    document.getElementById('pg-calls').innerHTML=count>S.PAGE_SIZE?`<button class="pgbtn" ${S.callsPage===0?'disabled':''} onclick="S.callsPage--;loadCallLogs()">← Prev</button><span>Page ${S.callsPage+1}/${Math.max(1,totalPages)} · ${count.toLocaleString()} calls</span><button class="pgbtn" ${S.callsPage>=totalPages-1?'disabled':''} onclick="S.callsPage++;loadCallLogs()">Next →</button>`:'';
   }catch(e){toast('Error: '+e.message,'e');}
 }
 
-// ─────────────────────────────────────────
-// EMPLOYEES
-// ─────────────────────────────────────────
+// ─── EMPLOYEES ───
 async function rEmps(){
   const grid=document.getElementById('emp-grid');
-  if(!S.employees.length){grid.innerHTML='<div class="empty"><div class="empty-i">👥</div><div class="empty-t">No employees yet</div><button class="btn btn-p" onclick="openOv(\'ov-emp\')" style="margin-top:10px">+ Add Employee</button></div>';return;}
+  if(!S.employees.length){grid.innerHTML='<div class="empty"><div class="empty-i">👥</div><div class="empty-t">No employees yet</div></div>';return;}
   grid.innerHTML='<div style="color:var(--text3);font-size:12px;padding:10px">Loading stats…</div>';
   const today=new Date().toISOString().slice(0,10);
   const empStats=await Promise.all(S.employees.map(async e=>{
-    const [l,cl,calls,todayC,fu]=await Promise.all([
-      supaQ('leads',`assigned_to=eq.${e.id}&status=neq.junk&select=id`),
-      supaQ('leads',`assigned_to=eq.${e.id}&status=eq.closed&select=id`),
-      supaQ('call_logs',`emp_id=eq.${e.id}&select=id`),
-      supaQ('call_logs',`emp_id=eq.${e.id}&created_at=gte.${today}&select=id`),
-      supaQ('leads',`assigned_to=eq.${e.id}&followup_date=eq.${today}&status=not.in.(closed,junk)&select=id`),
-    ]);
+    const[l,cl,calls,todayC,fu]=await Promise.all([supaQ('leads',`assigned_to=eq.${e.id}&status=neq.junk&select=id`),supaQ('leads',`assigned_to=eq.${e.id}&status=eq.closed&select=id`),supaQ('call_logs',`emp_id=eq.${e.id}&select=id`),supaQ('call_logs',`emp_id=eq.${e.id}&created_at=gte.${today}&select=id`),supaQ('leads',`assigned_to=eq.${e.id}&followup_date=eq.${today}&status=not.in.(closed,junk)&select=id`)]);
     return{...e,leads:l.count,closed:cl.count,calls:calls.count,todayCalls:todayC.count,dueToday:fu.count};
   }));
   grid.innerHTML=empStats.map(e=>{
     const pct=e.leads?Math.round(e.closed/e.leads*100):0;
-    return`<div class="ecard">
-      <div class="eav" style="background:${e.color||'#0ea5e9'}">${e.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}</div>
-      <div class="en">${esc(e.name)}</div>
-      <div class="ee">${esc(e.email)}</div>
-      <div style="font-size:11px;color:var(--text3);text-align:center;margin-bottom:4px">${esc(e.dept||'Sales')}</div>
-      ${e.dueToday?`<div style="text-align:center;margin-bottom:6px"><span class="due-today">📅 ${e.dueToday} due today</span></div>`:''}
-      <div class="estats">
-        <div class="estat"><div class="estat-v" style="color:var(--blue)">${e.leads}</div><div class="estat-l">Leads</div></div>
-        <div class="estat"><div class="estat-v" style="color:var(--cyan)">${e.calls}</div><div class="estat-l">Calls</div></div>
-        <div class="estat"><div class="estat-v" style="color:var(--purple)">${e.closed}</div><div class="estat-l">Closed</div></div>
-      </div>
-      <div style="margin-top:8px;font-size:11px;color:var(--text3);text-align:center">Today: <strong style="color:var(--text)">${e.todayCalls} calls</strong> · Conv: <strong style="color:var(--green)">${pct}%</strong></div>
-      <div class="pb" style="margin-top:6px"><div class="pf" style="width:${pct}%;background:${e.color||'#0ea5e9'}"></div></div>
-      <div style="display:flex;gap:6px;margin-top:10px">
-        <button class="btn btn-g btn-xs" style="flex:1" onclick="viewEmpLeads('${e.id}')">Leads</button>
-        <button class="btn btn-g btn-xs" style="flex:1" onclick="openEditEmp('${e.id}','${esc(e.name)}','${esc(e.email)}','${esc(e.phone||'')}','${esc(e.dept||'')}')">Edit</button>
-        <button class="btn btn-r btn-xs" onclick="delEmp('${e.id}')">✕</button>
-      </div>
-    </div>`;
+    return`<div class="ecard"><div class="eav" style="background:${e.color||'#0ea5e9'}">${e.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}</div><div class="en">${esc(e.name)}</div><div class="ee">${esc(e.email)}</div><div style="font-size:11px;color:var(--text3);text-align:center;margin-bottom:4px">${esc(e.dept||'Sales')}</div>${e.dueToday?`<div style="text-align:center;margin-bottom:6px"><span class="due-today">📅 ${e.dueToday} due today</span></div>`:''}<div class="estats"><div class="estat"><div class="estat-v" style="color:var(--blue)">${e.leads}</div><div class="estat-l">Leads</div></div><div class="estat"><div class="estat-v" style="color:var(--cyan)">${e.calls}</div><div class="estat-l">Calls</div></div><div class="estat"><div class="estat-v" style="color:var(--purple)">${e.closed}</div><div class="estat-l">Closed</div></div></div><div style="margin-top:8px;font-size:11px;color:var(--text3);text-align:center">Today: <strong style="color:var(--text)">${e.todayCalls} calls</strong> · Conv: <strong style="color:var(--green)">${pct}%</strong></div><div class="pb" style="margin-top:6px"><div class="pf" style="width:${pct}%;background:${e.color||'#0ea5e9'}"></div></div><div style="display:flex;gap:6px;margin-top:10px"><button class="btn btn-g btn-xs" style="flex:1" onclick="viewEmpLeads('${e.id}')">Leads</button><button class="btn btn-g btn-xs" style="flex:1" onclick="openEditEmp('${e.id}','${esc(e.name)}','${esc(e.email)}','${esc(e.phone||'')}','${esc(e.dept||'')}')">Edit</button><button class="btn btn-r btn-xs" onclick="delEmp('${e.id}')">✕</button></div></div>`;
   }).join('');
 }
-function openAddEmp(){ document.getElementById('em-t').textContent='Add Employee'; document.getElementById('em-id').value=''; ['name','email','pass','phone','dept'].forEach(f=>document.getElementById('em-'+f).value=''); openOv('ov-emp'); }
-function openEditEmp(id,name,email,phone,dept){ document.getElementById('em-t').textContent='Edit Employee'; document.getElementById('em-id').value=id; document.getElementById('em-name').value=name; document.getElementById('em-email').value=email; document.getElementById('em-pass').value=''; document.getElementById('em-phone').value=phone; document.getElementById('em-dept').value=dept; openOv('ov-emp'); }
+function openEditEmp(id,name,email,phone,dept){document.getElementById('em-t').textContent='Edit Employee';document.getElementById('em-id').value=id;document.getElementById('em-name').value=name;document.getElementById('em-email').value=email;document.getElementById('em-pass').value='';document.getElementById('em-phone').value=phone;document.getElementById('em-dept').value=dept;openOv('ov-emp');}
 async function saveEmployee(){
-  const name=document.getElementById('em-name').value.trim(), email=document.getElementById('em-email').value.trim(), pass=document.getElementById('em-pass').value, id=document.getElementById('em-id').value;
+  const name=document.getElementById('em-name').value.trim(),email=document.getElementById('em-email').value.trim(),pass=document.getElementById('em-pass').value,id=document.getElementById('em-id').value;
   if(!name||!email){toast('Name and email required','e');return;}
   const colors=['#0ea5e9','#22c55e','#f59e0b','#a855f7','#ef4444','#f43f5e','#06b6d4','#84cc16'];
   const body={name,email,phone:document.getElementById('em-phone').value.trim(),dept:document.getElementById('em-dept').value.trim(),role:'employee'};
-  if(pass) body.password=pass;
+  if(pass)body.password=pass;
   try{
-    if(id){ await supa(`users?id=eq.${id}`,'PATCH',body); toast('Updated ✓','s'); }
-    else{ if(!pass){toast('Password required','e');return;} body.color=colors[S.employees.length%colors.length]; await supa('users','POST',body); toast('Employee added ✓','s'); }
-    await loadEmployeeCache(); populateEmpSelects(); closeOv('ov-emp'); rEmps();
+    if(id){await supa(`users?id=eq.${id}`,'PATCH',body);toast('Updated ✓','s');}
+    else{if(!pass){toast('Password required','e');return;}body.color=colors[S.employees.length%colors.length];await supa('users','POST',body);toast('Employee added ✓','s');}
+    await loadEmployeeCache();populateEmpSelects();closeOv('ov-emp');rEmps();
   }catch(e){toast('Error: '+e.message,'e');}
 }
-async function delEmp(id){
-  if(!confirm('Remove employee?'))return;
-  try{ await supa(`users?id=eq.${id}`,'DELETE'); await supa(`leads?assigned_to=eq.${id}`,'PATCH',{assigned_to:null}); await loadEmployeeCache(); populateEmpSelects(); rEmps(); toast('Removed','s'); }
-  catch(e){toast('Error: '+e.message,'e');}
-}
-function viewEmpLeads(id){ navTo('all'); setTimeout(()=>{ const s=document.getElementById('f-emp'); if(s){s.value=id;loadLeads(true);} },100); }
+async function delEmp(id){if(!confirm('Remove employee?'))return;try{await supa(`users?id=eq.${id}`,'DELETE');await supa(`leads?assigned_to=eq.${id}`,'PATCH',{assigned_to:null});await loadEmployeeCache();populateEmpSelects();rEmps();toast('Removed','s');}catch(e){toast('Error: '+e.message,'e');}}
+function viewEmpLeads(id){navTo('all');setTimeout(()=>{const s=document.getElementById('f-emp');if(s){s.value=id;loadLeads(true);}},100);}
 
-// ─────────────────────────────────────────
-// ADMINS
-// ─────────────────────────────────────────
+// ─── ADMINS ───
 async function rAdmins(){
-  try{
-    const d=await supa('users','GET',null,'role=eq.admin&order=created_at');
-    document.getElementById('tb-admins').innerHTML=(d||[]).map(a=>`<tr><td class="td-m">${esc(a.name)}</td><td style="font-family:var(--mono);font-size:12px">${esc(a.email)}</td><td><span class="bdg bdg-new">Admin</span></td><td>${a.email!==S.user.email?`<button class="btn btn-r btn-xs" onclick="delAdmin('${a.id}')">Remove</button>`:'<span style="font-size:11px;color:var(--text3)">You</span>'}</td></tr>`).join('');
-  }catch(e){toast('Error: '+e.message,'e');}
+  try{const d=await supa('users','GET',null,'role=eq.admin&order=created_at');document.getElementById('tb-admins').innerHTML=(d||[]).map(a=>`<tr><td class="td-m">${esc(a.name)}</td><td style="font-family:var(--mono);font-size:12px">${esc(a.email)}</td><td><span class="bdg bdg-new">Admin</span></td><td>${a.email!==S.user.email?`<button class="btn btn-r btn-xs" onclick="delAdmin('${a.id}')">Remove</button>`:'<span style="font-size:11px;color:var(--text3)">You</span>'}</td></tr>`).join('');}catch(e){toast('Error: '+e.message,'e');}
 }
 async function saveAdmin(){
-  const name=document.getElementById('adm-name').value.trim(), email=document.getElementById('adm-email').value.trim(), pass=document.getElementById('adm-pass').value;
+  const name=document.getElementById('adm-name').value.trim(),email=document.getElementById('adm-email').value.trim(),pass=document.getElementById('adm-pass').value;
   if(!name||!email||!pass){toast('All fields required','e');return;}
-  try{ await supa('users','POST',{name,email,password:pass,role:'admin',color:'#0ea5e9'}); closeOv('ov-admin'); rAdmins(); toast('Admin added ✓','s'); }
-  catch(e){toast('Error: '+e.message,'e');}
+  try{await supa('users','POST',{name,email,password:pass,role:'admin',color:'#0ea5e9'});closeOv('ov-admin');rAdmins();toast('Admin added ✓','s');}catch(e){toast('Error: '+e.message,'e');}
 }
-async function delAdmin(id){ if(!confirm('Remove admin?'))return; try{ await supa(`users?id=eq.${id}`,'DELETE'); rAdmins(); toast('Removed','s'); }catch(e){toast('Error: '+e.message,'e');} }
+async function delAdmin(id){if(!confirm('Remove admin?'))return;try{await supa(`users?id=eq.${id}`,'DELETE');rAdmins();toast('Removed','s');}catch(e){toast('Error: '+e.message,'e');}}
 
-// ─────────────────────────────────────────
-// REPORTS
-// ─────────────────────────────────────────
+// ─── REPORTS ───
 async function rRep(){
   try{
-    const [total,closed,hot,called,totalCalls,junkC]=await Promise.all([
-      supaQ('leads','status=neq.junk&select=id'),
-      supaQ('leads','status=eq.closed&select=id'),
-      supaQ('leads','status=eq.interested&select=id'),
-      supaQ('leads','call_count=gt.0&status=neq.junk&select=id'),
-      supaQ('call_logs','select=id'),
-      supaQ('leads','status=eq.junk&select=id'),
-    ]);
+    const[total,closed,hot,called,totalCalls,junkC]=await Promise.all([supaQ('leads','status=neq.junk&select=id'),supaQ('leads','status=eq.closed&select=id'),supaQ('leads','status=eq.interested&select=id'),supaQ('leads','call_count=gt.0&status=neq.junk&select=id'),supaQ('call_logs','select=id'),supaQ('leads','status=eq.junk&select=id')]);
     const t=total.count,cl=closed.count,h=hot.count,c=called.count,tc=totalCalls.count;
-    document.getElementById('rep-stats').innerHTML=`
-      <div class="stat bl"><div class="stat-ic">${ICS.users}</div><div class="stat-v">${S.employees.length}</div><div class="stat-l">Team size</div></div>
-      <div class="stat am"><div class="stat-ic">${ICS.phone}</div><div class="stat-v">${tc.toLocaleString()}</div><div class="stat-l">Total calls</div></div>
-      <div class="stat pu"><div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div><div class="stat-v">${t?Math.round(cl/t*100):0}%</div><div class="stat-l">Conversion</div></div>
-      <div class="stat re"><div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="1" y1="1" x2="23" y2="23"/></svg></div><div class="stat-v">${junkC.count}</div><div class="stat-l">Junk leads</div></div>`;
-    // Team perf
-    const empStats=await Promise.all(S.employees.map(async e=>{
-      const [l,cl2,calls]=await Promise.all([supaQ('leads',`assigned_to=eq.${e.id}&status=neq.junk&select=id`),supaQ('leads',`assigned_to=eq.${e.id}&status=eq.closed&select=id`),supaQ('call_logs',`emp_id=eq.${e.id}&select=id`)]);
-      return{...e,leads:l.count,closed:cl2.count,calls:calls.count};
-    }));
+    document.getElementById('rep-stats').innerHTML=`<div class="stat bl"><div class="stat-ic">${ICS.users}</div><div class="stat-v">${S.employees.length}</div><div class="stat-l">Team size</div></div><div class="stat am"><div class="stat-ic">${ICS.phone}</div><div class="stat-v">${tc.toLocaleString()}</div><div class="stat-l">Total calls</div></div><div class="stat pu"><div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div><div class="stat-v">${t?Math.round(cl/t*100):0}%</div><div class="stat-l">Conversion</div></div><div class="stat re"><div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="1" y1="1" x2="23" y2="23"/></svg></div><div class="stat-v">${junkC.count}</div><div class="stat-l">Junk leads</div></div>`;
+    const empStats=await Promise.all(S.employees.map(async e=>{const[l,cl2,calls]=await Promise.all([supaQ('leads',`assigned_to=eq.${e.id}&status=neq.junk&select=id`),supaQ('leads',`assigned_to=eq.${e.id}&status=eq.closed&select=id`),supaQ('call_logs',`emp_id=eq.${e.id}&select=id`)]);return{...e,leads:l.count,closed:cl2.count,calls:calls.count};}));
     document.getElementById('rep-perf').innerHTML=empStats.map(e=>{const pct=e.leads?Math.round(e.closed/e.leads*100):0;return`<div style="margin-bottom:14px"><div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><span style="width:7px;height:7px;border-radius:50%;background:${e.color}"></span><span style="font-size:12.5px;font-weight:600;flex:1">${esc(e.name)}</span><span style="font-family:var(--mono);font-size:11px;color:var(--text3)">${e.calls}c · ${e.closed}/${e.leads}</span><span style="font-family:var(--mono);font-size:12px;color:var(--purple)">${pct}%</span></div><div class="pb"><div class="pf" style="width:${pct}%;background:${e.color||'#0ea5e9'}"></div></div></div>`;}).join('')||'<div class="empty">No employees</div>';
-    // Funnel
     const funnel=[{l:'Total Valid',c:t,col:'var(--blue)'},{l:'Called',c:c,col:'var(--amber)'},{l:'Interested 🔥',c:h,col:'var(--green)'},{l:'Closed ✓',c:cl,col:'var(--purple)'}];
     document.getElementById('rep-funnel').innerHTML=funnel.map(f=>{const w=t?Math.max(Math.round(f.c/t*100),2):0;return`<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:4px"><span style="color:var(--text2)">${f.l}</span><span style="font-family:var(--mono);color:var(--text3)">${f.c.toLocaleString()}</span></div><div style="height:26px;background:var(--bg2);border-radius:6px;overflow:hidden"><div style="height:100%;width:${w}%;background:${f.col};border-radius:6px;display:flex;align-items:center;padding:0 8px;min-width:20px"><span style="font-size:11px;font-family:var(--mono);color:#fff">${w}%</span></div></div></div>`;}).join('');
-    // Sources
     const srcs=['Website','WhatsApp','Reference','Cold Call','Exhibition','Social Media','Email Campaign','Other'];
     const srcCounts=await Promise.all(srcs.map(s=>supaQ('leads',`source=eq.${encodeURIComponent(s)}&select=id`)));
     document.getElementById('rep-sources').innerHTML=srcs.map((s,i)=>{const c=srcCounts[i].count,pct=t?Math.round(c/t*100):0;return c?`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px;color:var(--text2)"><span>${s}</span><span style="font-family:var(--mono)">${c}</span></div><div class="pb"><div class="pf" style="width:${pct}%;background:var(--cyan)"></div></div></div>`:''}).join('')||'<div class="empty" style="padding:20px">No source data yet</div>';
-    // Deal pipeline
     const deals=await supa('leads','GET',null,'status=not.in.(closed,junk)&deal_value=gt.0&order=deal_value.desc&limit=10&select=name,company,deal_value,status');
     const totalDeal=(deals||[]).reduce((a,x)=>a+(x.deal_value||0),0);
     document.getElementById('rep-deals').innerHTML=`<div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:12px">Pipeline: ₹${totalDeal.toLocaleString()}</div>`+(deals&&deals.length?deals.map(d=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)"><div style="flex:1"><div style="font-size:12.5px;font-weight:600">${esc(d.name)}</div>${d.company?`<div style="font-size:11px;color:var(--text3)">${esc(d.company)}</div>`:''}</div><span class="bdg bdg-${d.status}">${sLabel(d.status)}</span><span style="font-family:var(--mono);font-size:12px;color:var(--green)">₹${Number(d.deal_value).toLocaleString()}</span></div>`).join(''):'<div class="empty" style="padding:20px">No deal values added</div>');
+    // Category breakdown
+    const catCounts=await Promise.all(CATEGORIES.map(c=>supaQ('leads',`category=eq.${encodeURIComponent(c)}&status=neq.junk&select=id`)));
+    const catTotal=catCounts.reduce((a,x)=>a+x.count,0);
+    document.getElementById('rep-categories').innerHTML=catTotal?CATEGORIES.map((c,i)=>{const cnt=catCounts[i].count,pct=catTotal?Math.round(cnt/catTotal*100):0;return cnt?`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px;color:var(--text2)"><span>${c}</span><span style="font-family:var(--mono)">${cnt}</span></div><div class="pb"><div class="pf" style="width:${pct}%;background:var(--cyan)"></div></div></div>`:''}).join(''):'<div class="empty" style="padding:20px">No category data yet — assign categories to your leads</div>';
   }catch(e){toast('Error: '+e.message,'e');}
 }
 
-// ─────────────────────────────────────────
-// EMPLOYEE DASHBOARD
-// ─────────────────────────────────────────
+// ─── EMPLOYEE DASHBOARD ───
 async function rEDash(){
   const h=new Date().getHours();
   document.getElementById('tb-t').textContent=(h<12?'Good morning':h<17?'Good afternoon':'Good evening')+', '+S.user.name.split(' ')[0]+'! 👋';
   const today=new Date().toISOString().slice(0,10);
   try{
-    const [myL,cl,nw,hot,myCalls,todayC,madeTday,overdueF,dueTodayF]=await Promise.all([
-      supaQ('leads',`assigned_to=eq.${S.user.id}&status=neq.junk&select=id`),
-      supaQ('leads',`assigned_to=eq.${S.user.id}&status=eq.closed&select=id`),
-      supaQ('leads',`assigned_to=eq.${S.user.id}&status=eq.new&select=id`),
-      supaQ('leads',`assigned_to=eq.${S.user.id}&status=eq.interested&select=id`),
-      supaQ('call_logs',`emp_id=eq.${S.user.id}&select=id`),
-      supaQ('call_logs',`emp_id=eq.${S.user.id}&created_at=gte.${today}&select=id`),
-      supaQ('call_logs',`emp_id=eq.${S.user.id}&created_at=gte.${today}&status=eq.made&select=id`),
-      supaQ('leads',`assigned_to=eq.${S.user.id}&followup_date=lt.${today}&status=not.in.(closed,junk)&select=id`),
-      supaQ('leads',`assigned_to=eq.${S.user.id}&followup_date=eq.${today}&status=not.in.(closed,junk)&select=id`),
-    ]);
+    const[myL,cl,nw,hot,myCalls,todayC,madeTday,overdueF,dueTodayF]=await Promise.all([supaQ('leads',`assigned_to=eq.${S.user.id}&status=neq.junk&select=id`),supaQ('leads',`assigned_to=eq.${S.user.id}&status=eq.closed&select=id`),supaQ('leads',`assigned_to=eq.${S.user.id}&status=eq.new&select=id`),supaQ('leads',`assigned_to=eq.${S.user.id}&status=eq.interested&select=id`),supaQ('call_logs',`emp_id=eq.${S.user.id}&select=id`),supaQ('call_logs',`emp_id=eq.${S.user.id}&created_at=gte.${today}&select=id`),supaQ('call_logs',`emp_id=eq.${S.user.id}&created_at=gte.${today}&status=eq.made&select=id`),supaQ('leads',`assigned_to=eq.${S.user.id}&followup_date=lt.${today}&status=not.in.(closed,junk)&select=id`),supaQ('leads',`assigned_to=eq.${S.user.id}&followup_date=eq.${today}&status=not.in.(closed,junk)&select=id`)]);
     const alerts=[];
-    if(overdueF.count>0) alerts.push(`<div class="alert-banner urgent">⚠️ <strong>${overdueF.count} overdue follow-ups!</strong> Call them now. <button onclick="document.getElementById('f-my-followup').value='overdue';navTo('myleads');setTimeout(()=>loadMyLeads(true),100)" style="background:var(--red);color:#fff">View</button></div>`);
-    if(dueTodayF.count>0) alerts.push(`<div class="alert-banner">🔔 <strong>${dueTodayF.count} follow-ups today.</strong> <button onclick="document.getElementById('f-my-followup').value='today';navTo('myleads');setTimeout(()=>loadMyLeads(true),100)">View</button></div>`);
+    if(overdueF.count>0)alerts.push(`<div class="alert-banner urgent">⚠️ <strong>${overdueF.count} overdue follow-ups!</strong> Call them now. <button onclick="document.getElementById('f-my-followup').value='overdue';navTo('myleads');setTimeout(()=>loadMyLeads(true),100)" style="background:var(--red);color:#fff">View</button></div>`);
+    if(dueTodayF.count>0)alerts.push(`<div class="alert-banner">🔔 <strong>${dueTodayF.count} follow-ups today.</strong> <button onclick="document.getElementById('f-my-followup').value='today';navTo('myleads');setTimeout(()=>loadMyLeads(true),100)">View</button></div>`);
     document.getElementById('edash-alerts').innerHTML=alerts.join('');
-    document.getElementById('edash-s').innerHTML=`
-      <div class="stat bl"><div class="stat-ic">${ICS.users}</div><div class="stat-v">${myL.count}</div><div class="stat-l">My Leads</div></div>
-      <div class="stat am"><div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg></div><div class="stat-v">${nw.count}</div><div class="stat-l">Need Calling</div></div>
-      <div class="stat gr"><div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg></div><div class="stat-v">${hot.count}</div><div class="stat-l">Interested 🔥</div></div>
-      <div class="stat cy"><div class="stat-ic">${ICS.phone}</div><div class="stat-v">${todayC.count}</div><div class="stat-l">Today's Calls</div></div>`;
-    // Today's follow-ups
+    document.getElementById('edash-s').innerHTML=`<div class="stat bl"><div class="stat-ic">${ICS.users}</div><div class="stat-v">${myL.count}</div><div class="stat-l">My Leads</div></div><div class="stat am"><div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg></div><div class="stat-v">${nw.count}</div><div class="stat-l">Need Calling</div></div><div class="stat gr"><div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg></div><div class="stat-v">${hot.count}</div><div class="stat-l">Interested 🔥</div></div><div class="stat cy"><div class="stat-ic">${ICS.phone}</div><div class="stat-v">${todayC.count}</div><div class="stat-l">Today's Calls</div></div>`;
     const fuLeads=await supa('leads','GET',null,`assigned_to=eq.${S.user.id}&followup_date=eq.${today}&status=not.in.(closed,junk)&limit=5&select=id,name,company,phone,status,product,city,score`);
     document.getElementById('edash-followups').innerHTML=(fuLeads&&fuLeads.length)?fuLeads.map(l=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)"><div style="flex:1"><div style="font-size:13px;font-weight:600">${esc(l.name)}</div><div style="font-size:11px;color:var(--text3)">${esc(l.company||'')} ${esc(l.product||'')}</div></div>${scoreBar(l.score||'warm')}<span class="bdg bdg-${l.status}">${sLabel(l.status)}</span><div style="display:flex;gap:4px"><a class="cbtn" style="padding:3px 8px;font-size:10px" href="tel:${(l.phone||'').replace(/\D/g,'')}" onclick="logAutoCall('${l.id}','${esc(l.name)}','${esc(l.phone||'')}')">📞</a><button class="btn btn-p btn-xs" onclick="openUpdate('${l.id}','${esc(l.name)}','${esc(l.phone||'')}','${esc(l.company||'')}','${esc(l.product||'')}','${esc(l.city||'')}','${l.status}','${l.score||'warm'}')">Update</button></div></div>`).join(''):'<div class="empty" style="padding:20px"><div class="empty-i">✅</div><div class="empty-t">No follow-ups today</div></div>';
-    // High priority
     const hp=await supa('leads','GET',null,`assigned_to=eq.${S.user.id}&priority=eq.high&status=not.in.(closed,notinterested,junk)&limit=5&select=id,name,company,phone,status,product,city,score`);
     document.getElementById('edash-hot').innerHTML=(hp&&hp.length)?hp.map(l=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)"><div style="flex:1"><div style="font-size:13px;font-weight:600">${esc(l.name)}</div><div style="font-size:11px;color:var(--text3)">${esc(l.company||'')} ${esc(l.product||'')}</div></div>${scoreBar(l.score||'warm')}<span class="bdg bdg-${l.status}">${sLabel(l.status)}</span><button class="btn btn-p btn-xs" onclick="openUpdate('${l.id}','${esc(l.name)}','${esc(l.phone||'')}','${esc(l.company||'')}','${esc(l.product||'')}','${esc(l.city||'')}','${l.status}','${l.score||'warm'}')">Update</button></div>`).join(''):'<div class="empty" style="padding:20px"><div class="empty-i">🎯</div>No high priority leads</div>';
-    document.getElementById('edash-calls').innerHTML=`
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
-        <div style="background:var(--bg2);border-radius:var(--r);padding:12px;text-align:center"><div style="font-family:var(--mono);font-size:20px;color:var(--green)">${madeTday.count}</div><div style="font-size:10.5px;color:var(--text3);margin-top:2px">Made today</div></div>
-        <div style="background:var(--bg2);border-radius:var(--r);padding:12px;text-align:center"><div style="font-family:var(--mono);font-size:20px;color:var(--cyan)">${myCalls.count}</div><div style="font-size:10.5px;color:var(--text3);margin-top:2px">All-time</div></div>
-        <div style="background:var(--bg2);border-radius:var(--r);padding:12px;text-align:center"><div style="font-family:var(--mono);font-size:20px;color:var(--purple)">${cl.count}</div><div style="font-size:10.5px;color:var(--text3);margin-top:2px">Closed</div></div>
-      </div>
-      <div style="margin-top:12px;text-align:center"><button class="btn btn-p btn-sm" onclick="navTo('myleads')">Go to My Leads →</button></div>`;
-    // Status breakdown
+    document.getElementById('edash-calls').innerHTML=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px"><div style="background:var(--bg2);border-radius:var(--r);padding:12px;text-align:center"><div style="font-family:var(--mono);font-size:20px;color:var(--green)">${madeTday.count}</div><div style="font-size:10.5px;color:var(--text3);margin-top:2px">Made today</div></div><div style="background:var(--bg2);border-radius:var(--r);padding:12px;text-align:center"><div style="font-family:var(--mono);font-size:20px;color:var(--cyan)">${myCalls.count}</div><div style="font-size:10.5px;color:var(--text3);margin-top:2px">All-time</div></div><div style="background:var(--bg2);border-radius:var(--r);padding:12px;text-align:center"><div style="font-family:var(--mono);font-size:20px;color:var(--purple)">${cl.count}</div><div style="font-size:10.5px;color:var(--text3);margin-top:2px">Closed</div></div></div><div style="margin-top:12px;text-align:center"><button class="btn btn-p btn-sm" onclick="navTo('myleads')">Go to My Leads →</button></div>`;
     const sts=[['new','New','var(--blue)'],['called','Called','var(--amber)'],['interested','Interested','var(--green)'],['callback','Callback','var(--purple)'],['notinterested','Not Interested','var(--red)'],['closed','Closed','#22c55e']];
     const counts=await Promise.all(sts.map(s=>supaQ('leads',`assigned_to=eq.${S.user.id}&status=eq.${s[0]}&select=id`)));
-    const total=myL.count;
-    document.getElementById('edash-breakdown').innerHTML=sts.map((s,i)=>{const c=counts[i].count,pct=total?Math.round(c/total*100):0;return c?`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px;color:var(--text2)"><span>${s[1]}</span><span style="font-family:var(--mono)">${c}</span></div><div class="pb"><div class="pf" style="width:${pct}%;background:${s[2]}"></div></div></div>`:''}).join('');
+    const totalL=myL.count;
+    document.getElementById('edash-breakdown').innerHTML=sts.map((s,i)=>{const c=counts[i].count,pct=totalL?Math.round(c/totalL*100):0;return c?`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px;color:var(--text2)"><span>${s[1]}</span><span style="font-family:var(--mono)">${c}</span></div><div class="pb"><div class="pf" style="width:${pct}%;background:${s[2]}"></div></div></div>`:''}).join('');
   }catch(e){toast('Error: '+e.message,'e');}
 }
 
-// ─────────────────────────────────────────
-// MY CALLS
-// ─────────────────────────────────────────
+// ─── MY CALLS ───
 async function loadMyCalls(){
   const today=new Date().toISOString().slice(0,10);
   try{
-    const [total,made,missed,todayC,tMin]=await Promise.all([
-      supaQ('call_logs',`emp_id=eq.${S.user.id}&select=id`),
-      supaQ('call_logs',`emp_id=eq.${S.user.id}&status=eq.made&select=id`),
-      supaQ('call_logs',`emp_id=eq.${S.user.id}&status=eq.missed&select=id`),
-      supaQ('call_logs',`emp_id=eq.${S.user.id}&created_at=gte.${today}&select=id`),
-      supa('call_logs','GET',null,`emp_id=eq.${S.user.id}&select=duration`),
-    ]);
+    const[total,made,missed,todayC,tMin]=await Promise.all([supaQ('call_logs',`emp_id=eq.${S.user.id}&select=id`),supaQ('call_logs',`emp_id=eq.${S.user.id}&status=eq.made&select=id`),supaQ('call_logs',`emp_id=eq.${S.user.id}&status=eq.missed&select=id`),supaQ('call_logs',`emp_id=eq.${S.user.id}&created_at=gte.${today}&select=id`),supa('call_logs','GET',null,`emp_id=eq.${S.user.id}&select=duration`)]);
     const tM=(tMin||[]).reduce((a,x)=>a+(x.duration||0),0);
-    document.getElementById('mycall-s').innerHTML=`
-      <div class="stat bl"><div class="stat-ic">${ICS.phone}</div><div class="stat-v">${total.count}</div><div class="stat-l">Total</div></div>
-      <div class="stat gr"><div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div><div class="stat-v">${made.count}</div><div class="stat-l">Made</div></div>
-      <div class="stat re"><div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="1" y1="1" x2="23" y2="23"/></svg></div><div class="stat-v">${missed.count}</div><div class="stat-l">Missed</div></div>
-      <div class="stat cy"><div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="stat-v">${tM}</div><div class="stat-l">Minutes</div></div>`;
+    document.getElementById('mycall-s').innerHTML=`<div class="stat bl"><div class="stat-ic">${ICS.phone}</div><div class="stat-v">${total.count}</div><div class="stat-l">Total</div></div><div class="stat gr"><div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div><div class="stat-v">${made.count}</div><div class="stat-l">Made</div></div><div class="stat re"><div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="1" y1="1" x2="23" y2="23"/></svg></div><div class="stat-v">${missed.count}</div><div class="stat-l">Missed</div></div><div class="stat cy"><div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="stat-v">${tM}</div><div class="stat-l">Minutes</div></div>`;
     const logs=await supa('call_logs','GET',null,`emp_id=eq.${S.user.id}&order=created_at.desc&limit=100&select=*`);
     const tb=document.getElementById('tb-mycalls');
     if(!logs||!logs.length){tb.innerHTML=`<tr><td colspan="7"><div class="empty"><div class="empty-i">📞</div><div class="empty-t">No calls yet</div></div></td></tr>`;return;}
-    tb.innerHTML=logs.map(c=>`<tr>
-      <td style="font-family:var(--mono);font-size:11px;color:var(--text2)">${new Date(c.created_at).toLocaleString()}</td>
-      <td>${esc(c.lead_name||'')}</td>
-      <td style="font-size:11.5px;color:var(--blue2)">${esc(c.company||'—')}</td>
-      <td style="font-family:var(--mono);font-size:12px;color:var(--blue2)">${esc(c.phone||'')}</td>
-      <td><span class="cl-${c.status}">${c.status==='made'?'✅ Made':'❌ Missed'}</span></td>
-      <td style="font-family:var(--mono);font-size:12px">${c.duration?c.duration+'m':'—'}</td>
-      <td class="td-xs">${esc(c.remark||'—')}</td>
-    </tr>`).join('');
+    tb.innerHTML=logs.map(c=>`<tr><td style="font-family:var(--mono);font-size:11px;color:var(--text2)">${new Date(c.created_at).toLocaleString()}</td><td>${esc(c.lead_name||'')}</td><td style="font-size:11.5px;color:var(--blue2)">${esc(c.company||'—')}</td><td style="font-family:var(--mono);font-size:12px;color:var(--blue2)">${esc(c.phone||'')}</td><td><span class="cl-${c.status}">${c.status==='made'?'✅ Made':'❌ Missed'}</span></td><td style="font-family:var(--mono);font-size:12px">${c.duration?c.duration+'m':'—'}</td><td class="td-xs">${esc(c.remark||'—')}</td></tr>`).join('');
   }catch(e){toast('Error: '+e.message,'e');}
 }
 
-// ─────────────────────────────────────────
-// PROFILE
-// ─────────────────────────────────────────
+// ─── PROFILE ───
 async function rProfile(){
   const u=S.user,av=u.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
   document.getElementById('p-hero').innerHTML=`<div class="phero-av" style="background:${u.color||'#0ea5e9'}">${av}</div><div><div style="font-size:20px;font-weight:800">${esc(u.name)}</div><div style="font-size:12px;color:var(--text3)">${esc(u.email)} · ${esc(u.dept||'Sales')}</div></div>`;
@@ -1545,9 +1259,7 @@ async function rProfile(){
   }catch(e){}
 }
 
-// ─────────────────────────────────────────
-// UPLOAD / IMPORT
-// ─────────────────────────────────────────
+// ─── UPLOAD / IMPORT ───
 function switchUpTab(tab,el){
   document.querySelectorAll('.tab-btns .tab-btn').forEach(b=>b.classList.remove('on'));
   el.classList.add('on');
@@ -1578,24 +1290,9 @@ function autoDetect(cols,kws){
 }
 function showPreview(data){
   const cols=Object.keys(data[0]);
-  const fields=[
-    {id:'mp-name',lbl:'Name *',kw:['name','customer','contact','full name','party']},
-    {id:'mp-phone',lbl:'Phone *',kw:['phone','mobile','number','cell','whatsapp']},
-    {id:'mp-company',lbl:'Company',kw:['company','organisation','business','firm','contractor']},
-    {id:'mp-email',lbl:'Email',kw:['email','mail','e-mail']},
-    {id:'mp-address',lbl:'Address',kw:['address','addr','location','area']},
-    {id:'mp-product',lbl:'Product',kw:['product','service','plan','item','category']},
-    {id:'mp-city',lbl:'City',kw:['city','state','district','place']},
-  ];
+  const fields=[{id:'mp-name',lbl:'Name *',kw:['name','customer','contact','full name','party']},{id:'mp-phone',lbl:'Phone *',kw:['phone','mobile','number','cell','whatsapp']},{id:'mp-company',lbl:'Company',kw:['company','organisation','business','firm']},{id:'mp-email',lbl:'Email',kw:['email','mail']},{id:'mp-address',lbl:'Address',kw:['address','addr','location','area']},{id:'mp-product',lbl:'Product',kw:['product','service','plan','item']},{id:'mp-city',lbl:'City',kw:['city','state','district']}];
   const det={};fields.forEach(f=>{det[f.id]=autoDetect(cols,f.kw);});
-  document.getElementById('up-preview').innerHTML=`
-    <div style="margin-top:16px"><div style="font-size:13px;font-weight:700;margin-bottom:10px">Map columns <span style="font-size:11px;color:var(--text3)">(auto-detected)</span></div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:12px">
-      ${fields.map(f=>`<div><div style="font-size:10px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:3px">${f.lbl}</div><select id="${f.id}" style="width:100%;background:var(--bg2);border:1px solid ${det[f.id]?'var(--green)':'var(--border)'};border-radius:var(--r);padding:6px 9px;color:var(--text);font-size:12px;font-family:var(--font);outline:none;"><option value="">— skip —</option>${cols.map(c=>`<option value="${esc(c)}" ${det[f.id]===c?'selected':''}>${esc(c)}</option>`).join('')}</select></div>`).join('')}
-    </div>
-    <div style="background:var(--bg2);border-radius:var(--r);padding:9px 12px;font-size:11.5px;color:var(--text2);margin-bottom:8px">Mapped: ${fields.filter(f=>det[f.id]).map(f=>`<strong>${f.lbl.replace(' *','')}</strong>→${esc(det[f.id])}`).join(' · ')||'None — select manually'}</div>
-    <div style="font-size:11.5px;color:var(--text3);margin-bottom:4px">Preview (first 5 of <strong style="color:var(--text)">${data.length.toLocaleString()}</strong>)</div>
-    <div style="max-height:200px;overflow-y:auto;overflow-x:auto;border:1px solid var(--border);border-radius:var(--r)"><table><thead><tr>${cols.slice(0,7).map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${data.slice(0,5).map(r=>`<tr>${cols.slice(0,7).map(c=>`<td style="padding:6px 9px;font-size:12px">${esc(String(r[c]||''))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+  document.getElementById('up-preview').innerHTML=`<div style="margin-top:16px"><div style="font-size:13px;font-weight:700;margin-bottom:10px">Map columns <span style="font-size:11px;color:var(--text3)">(auto-detected)</span></div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:12px">${fields.map(f=>`<div><div style="font-size:10px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:3px">${f.lbl}</div><select id="${f.id}" style="width:100%;background:var(--bg2);border:1px solid ${det[f.id]?'var(--green)':'var(--border)'};border-radius:var(--r);padding:6px 9px;color:var(--text);font-size:12px;font-family:var(--font);outline:none;"><option value="">— skip —</option>${cols.map(c=>`<option value="${esc(c)}" ${det[f.id]===c?'selected':''}>${esc(c)}</option>`).join('')}</select></div>`).join('')}</div><div style="background:var(--bg2);border-radius:var(--r);padding:9px 12px;font-size:11.5px;color:var(--text2);margin-bottom:8px">Mapped: ${fields.filter(f=>det[f.id]).map(f=>`<strong>${f.lbl.replace(' *','')}</strong>→${esc(det[f.id])}`).join(' · ')||'None — select manually'}</div><div style="font-size:11.5px;color:var(--text3);margin-bottom:4px">Preview (first 5 of <strong style="color:var(--text)">${data.length.toLocaleString()}</strong>)</div><div style="max-height:200px;overflow-y:auto;overflow-x:auto;border:1px solid var(--border);border-radius:var(--r)"><table><thead><tr>${cols.slice(0,7).map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${data.slice(0,5).map(r=>`<tr>${cols.slice(0,7).map(c=>`<td style="padding:6px 9px;font-size:12px">${esc(String(r[c]||''))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
 }
 function getCV(row,selId){const s=document.getElementById(selId);return s&&s.value?String(row[s.value]||'').trim():'';}
 async function importLeads(){
@@ -1606,143 +1303,190 @@ async function importLeads(){
   const status=document.getElementById('up-status').value||'new';
   const priority=document.getElementById('up-priority').value||'medium';
   const source=document.getElementById('up-source').value||null;
+  const category=document.getElementById('up-category').value||null;
   const prog=document.getElementById('import-progress');
   const BATCH=200;let count=0,skip=0,batch=[];
   const rows=S.pending.filter(r=>{const n=getCV(r,'mp-name'),p=getCV(r,'mp-phone');if(!n&&!p){skip++;return false;}return true;});
   prog.textContent=`Importing 0/${rows.length.toLocaleString()}…`;
   for(let i=0;i<rows.length;i++){
     const row=rows[i];
-    batch.push({name:getCV(row,'mp-name')||'Unknown',phone:getCV(row,'mp-phone')||'N/A',company:getCV(row,'mp-company'),email:getCV(row,'mp-email'),address:getCV(row,'mp-address'),product:getCV(row,'mp-product'),city:getCV(row,'mp-city'),assigned_to:assignTo,status,priority,source,call_count:0});
+    batch.push({name:getCV(row,'mp-name')||'Unknown',phone:getCV(row,'mp-phone')||'N/A',company:getCV(row,'mp-company'),email:getCV(row,'mp-email'),address:getCV(row,'mp-address'),product:getCV(row,'mp-product'),city:getCV(row,'mp-city'),assigned_to:assignTo,status,priority,source,category,call_count:0});
     if(batch.length===BATCH||i===rows.length-1){
-      try{ await supa('leads','POST',batch); count+=batch.length; prog.textContent=`Importing ${count.toLocaleString()}/${rows.length.toLocaleString()}…`; batch=[]; }
+      try{await supa('leads','POST',batch);count+=batch.length;prog.textContent=`Importing ${count.toLocaleString()}/${rows.length.toLocaleString()}…`;batch=[];}
       catch(e){toast('Import error: '+e.message,'e');break;}
     }
   }
-  clearUpload(); toast(`${count.toLocaleString()} leads imported! ${skip?`(${skip} empty skipped)`:''}`,'s'); navTo('all');
+  clearUpload();toast(`${count.toLocaleString()} leads imported! ${skip?`(${skip} empty skipped)`:''}`,'s');navTo('all');
 }
 function clearUpload(){S.pending=[];document.getElementById('up-preview').innerHTML='';document.getElementById('up-actions').style.display='none';document.getElementById('ufi').value='';document.getElementById('import-progress').textContent='';}
 
 async function addManualLead(){
-  const name=document.getElementById('man-name').value.trim(), phone=document.getElementById('man-phone').value.trim();
+  const name=document.getElementById('man-name').value.trim(),phone=document.getElementById('man-phone').value.trim();
   if(!name||!phone){toast('Name and phone required','e');return;}
   try{
     const note=document.getElementById('man-note').value.trim();
     const assign=document.getElementById('man-assign').value;
-    const res=await supa('leads','POST',[{name,phone,company:document.getElementById('man-company').value.trim(),email:document.getElementById('man-email').value.trim(),address:document.getElementById('man-address').value.trim(),product:document.getElementById('man-product').value.trim(),city:document.getElementById('man-city').value.trim(),source:document.getElementById('man-source').value||null,deal_value:parseFloat(document.getElementById('man-deal').value)||null,assigned_to:assign||null,priority:document.getElementById('man-pri').value,status:'new',call_count:0}]);
-    if(note&&res&&res[0]) await supa('remarks','POST',{lead_id:res[0].id,text:note,by_name:S.user.name,by_id:S.user.id,call_status:'',duration:0});
+    const res=await supa('leads','POST',[{name,phone,company:document.getElementById('man-company').value.trim(),email:document.getElementById('man-email').value.trim(),address:document.getElementById('man-address').value.trim(),product:document.getElementById('man-product').value.trim(),city:document.getElementById('man-city').value.trim(),source:document.getElementById('man-source').value||null,category:document.getElementById('man-category').value||null,deal_value:parseFloat(document.getElementById('man-deal').value)||null,assigned_to:assign||null,priority:document.getElementById('man-pri').value,status:'new',call_count:0}]);
+    if(note&&res&&res[0])await supa('remarks','POST',{lead_id:res[0].id,text:note,by_name:S.user.name,by_id:S.user.id,call_status:'',duration:0});
     ['man-name','man-phone','man-company','man-email','man-address','man-product','man-city','man-deal','man-note'].forEach(f=>{const el=document.getElementById(f);if(el)el.value='';});
     toast('Lead added ✓','s');
   }catch(e){toast('Error: '+e.message,'e');}
 }
 
-// ─────────────────────────────────────────
-// AI TEXT PARSER
-// ─────────────────────────────────────────
+// ─── AI TEXT PARSER (FIXED) ───
 function parseAIText(){
   const raw=document.getElementById('ai-text').value.trim();
   if(!raw){toast('Paste some text first','e');return;}
   const lines=raw.split('\n').filter(l=>l.trim());
   const parsed=[];
+
   lines.forEach(line=>{
+    // Phone
     const phoneMatch=line.match(/(?:\+?\d[\d\s\-]{8,14}\d)/g);
     const phone=phoneMatch?phoneMatch[0].replace(/[\s\-]/g,''):'';
+    // Email
     const emailMatch=line.match(/[\w.\-]+@[\w.\-]+\.\w+/);
     const email=emailMatch?emailMatch[0]:'';
-    // Try to extract company — anything in brackets or after common separators
-    const compMatch=line.match(/(?:company|co\.|corp|ltd|pvt|inc|llp)[:\s]+([^,|;]+)/i);
+    // Company — text after known company keywords OR in quotes before/after the phone
+    const compMatch=line.match(/(?:company|co\.|corp|ltd|pvt|inc|llp)[:\s]+([^,|;\n]{2,50})/i);
     const company=compMatch?compMatch[1].trim():'';
-    let name=line.replace(phone,'').replace(email,'').replace(company,'').replace(/[\|,;:]/g,' ').replace(/\s+/g,' ').trim();
-    name=name.replace(/[\+\d\s\-\(\)]{7,}/g,' ').replace(/\s+/g,' ').trim().slice(0,60);
+    // Address — look for area/location keywords or comma-separated location parts
+    const addrPatterns=[
+      /(?:address|addr|area|location|sector|nagar|road|street|block|colony|mkt|market|bazaar|chowk|gate|vihar|enclave)[:\s-]+([^,|;\n]{4,80})/i,
+      /(?:B-Block|A-Block|[A-Z]-Block|Sector\s*\d+|Phase\s*\d+)[^,|;\n]*/i,
+    ];
+    let address='';
+    for(const pat of addrPatterns){
+      const m=line.match(pat);
+      if(m){address=m[1]?m[1].trim():m[0].trim();break;}
+    }
+    // Remark — anything after remark/note/weak point/push keywords
+    const remarkMatch=line.match(/(?:remark|note|weak\s*point|push|pitch|description|desc)[:\s]+(.{5,})/i);
+    let remark=remarkMatch?remarkMatch[1].trim():'';
+    // If no explicit remark keyword, check if line has enough context after removing known fields
+    // For CSV-style: "1,Agency Name,Area,Phone,Remark text" → last field after phone is remark
+    if(!remark&&phone){
+      const afterPhone=line.slice(line.indexOf(phone)+phone.length).replace(/^[\s,|;:]+/,'').trim();
+      if(afterPhone.length>10&&!/^\d/.test(afterPhone))remark=afterPhone.slice(0,200);
+    }
+    // Clean name — remove all extracted parts
+    let name=line
+      .replace(phone,'')
+      .replace(email,'')
+      .replace(remark,'')
+      .replace(address,'')
+      .replace(company,'')
+      .replace(/(?:remark|note|weak\s*point|push|pitch|description|desc)[:\s]+/gi,'')
+      .replace(/(?:address|addr|area|location|sector|nagar|road|street|block|colony|market)[:\s-]+/gi,'')
+      .replace(/(?:company|co\.|corp|ltd|pvt|inc|llp)[:\s]+/gi,'')
+      .replace(/[\|,;:]/g,' ')
+      .replace(/\s+/g,' ').trim();
+    name=name.replace(/[\+\d\s\-\(\)]{7,}/g,' ').replace(/^\d+\s*/,'').replace(/\s+/g,' ').trim().slice(0,60);
     if(!name&&!phone&&!email)return;
     if(name.length<2)name='Unknown';
-    parsed.push({name,phone,email,company});
+    parsed.push({name,phone,email,company,address,remark});
   });
+
   S.aiPending=parsed;
   if(!parsed.length){toast('Could not extract leads','e');return;}
+
   document.getElementById('ai-preview').innerHTML=`
     <div style="margin-top:14px;font-size:13px;font-weight:700;color:var(--green);margin-bottom:8px">✅ ${parsed.length} leads extracted</div>
-    <div style="max-height:250px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px"><table><thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Company</th></tr></thead><tbody>
-      ${parsed.map((r,i)=>`<tr><td><input value="${esc(r.name)}" oninput="S.aiPending[${i}].name=this.value" style="background:transparent;border:none;color:var(--text);font-family:var(--font);font-size:12px;width:100%;outline:none;min-width:80px"/></td><td><input value="${esc(r.phone)}" oninput="S.aiPending[${i}].phone=this.value" style="background:transparent;border:none;color:var(--blue2);font-family:var(--mono);font-size:12px;width:100%;outline:none;min-width:80px"/></td><td style="font-size:11px;color:var(--text3)">${esc(r.email)}</td><td><input value="${esc(r.company)}" oninput="S.aiPending[${i}].company=this.value" style="background:transparent;border:none;color:var(--text);font-family:var(--font);font-size:12px;width:100%;outline:none;min-width:80px"/></td></tr>`).join('')}
-    </tbody></table></div>
+    <div style="max-height:320px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px">
+      <table><thead><tr>
+        <th>Name</th><th>Phone</th><th>Company</th><th>Address</th><th>Remark</th>
+      </tr></thead><tbody>
+        ${parsed.map((r,i)=>`<tr>
+          <td><input value="${esc(r.name)}" oninput="S.aiPending[${i}].name=this.value" style="background:transparent;border:none;color:var(--text);font-family:var(--font);font-size:12px;width:100%;outline:none;min-width:80px"/></td>
+          <td><input value="${esc(r.phone)}" oninput="S.aiPending[${i}].phone=this.value" style="background:transparent;border:none;color:var(--blue2);font-family:var(--mono);font-size:12px;width:100%;outline:none;min-width:80px"/></td>
+          <td><input value="${esc(r.company)}" oninput="S.aiPending[${i}].company=this.value" style="background:transparent;border:none;color:var(--text);font-family:var(--font);font-size:12px;width:100%;outline:none;min-width:80px"/></td>
+          <td><input value="${esc(r.address)}" oninput="S.aiPending[${i}].address=this.value" style="background:transparent;border:none;color:var(--text2);font-family:var(--font);font-size:12px;width:100%;outline:none;min-width:80px"/></td>
+          <td><input value="${esc(r.remark)}" oninput="S.aiPending[${i}].remark=this.value" style="background:transparent;border:none;color:var(--amber);font-family:var(--font);font-size:12px;width:100%;outline:none;min-width:120px"/></td>
+        </tr>`).join('')}
+      </tbody></table>
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:8px">💡 You can edit any field above before importing</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn btn-p" onclick="importAILeads()">Import ${parsed.length} Leads</button>
       <button class="btn btn-g" onclick="document.getElementById('ai-preview').innerHTML='';S.aiPending=[]">Cancel</button>
     </div>`;
-  toast(`${parsed.length} leads parsed`,'i');
+  toast(`${parsed.length} leads parsed — check Address & Remark columns`,'i');
 }
+
 async function importAILeads(){
   if(!S.aiPending.length)return;
   const assignTo=document.getElementById('up-assign').value||null;
-  const rows=S.aiPending.filter(r=>r.name||r.phone).map(r=>({name:r.name||'Unknown',phone:r.phone||'N/A',email:r.email||'',company:r.company||'',assigned_to:assignTo,status:'new',priority:'medium',call_count:0}));
+  const rows=S.aiPending.filter(r=>r.name||r.phone).map(r=>({
+    name:r.name||'Unknown',
+    phone:r.phone||'N/A',
+    email:r.email||'',
+    company:r.company||'',
+    address:r.address||'',
+    assigned_to:assignTo,
+    status:'new',
+    priority:'medium',
+    call_count:0
+  }));
   try{
-    await supa('leads','POST',rows);
+    const res=await supa('leads','POST',rows);
+    // Save remarks for leads that have them
+    if(res&&res.length){
+      const remarkBatch=[];
+      for(let i=0;i<res.length;i++){
+        const remark=S.aiPending[i]?.remark;
+        if(remark&&remark.trim()&&res[i]?.id){
+          remarkBatch.push({lead_id:res[i].id,text:remark.trim(),by_name:'Import (AI Parse)',by_id:S.user.id,call_status:'',duration:0});
+        }
+      }
+      if(remarkBatch.length){
+        try{await supa('remarks','POST',remarkBatch);}catch(e){console.warn('Remark save partial error',e);}
+      }
+    }
     toast(`${rows.length} leads imported! ✓`,'s');
     S.aiPending=[];document.getElementById('ai-preview').innerHTML='';document.getElementById('ai-text').value='';
     navTo('all');
   }catch(e){toast('Error: '+e.message,'e');}
 }
 
-// ─────────────────────────────────────────
-// EXPORT CSV
-// ─────────────────────────────────────────
+// ─── EXPORT CSV ───
 async function exportCSV(){
   toast('Preparing export…','i');
   try{
     let all=[],offset=0,more=true;
-    while(more){
-      const d=await supa('leads','GET',null,`order=created_at.desc&limit=1000&offset=${offset}&select=*`);
-      if(d&&d.length){all=[...all,...d];offset+=1000;if(d.length<1000)more=false;}else more=false;
-    }
-    const h=['Name','Company','Phone','WhatsApp','Email','Address','City','Product','Source','Priority','Score','Status','Assigned To','Follow-up Date','Deal Value','Call Count','Created'];
-    const rows=all.map(l=>{
-      const emp=S.employees.find(e=>e.id===l.assigned_to);
-      return[l.name,l.company||'',l.phone||'',l.whatsapp||'',l.email||'',l.address||'',l.city||'',l.product||'',l.source||'',l.priority||'',l.score||'',l.status,emp?emp.name:'',l.followup_date||'',l.deal_value||'',l.call_count||0,new Date(l.created_at).toLocaleDateString()].map(v=>`"${String(v||'').replace(/"/g,'""')}"`).join(',');
-    });
+    while(more){const d=await supa('leads','GET',null,`order=created_at.desc&limit=1000&offset=${offset}&select=*`);if(d&&d.length){all=[...all,...d];offset+=1000;if(d.length<1000)more=false;}else more=false;}
+    const h=['Name','Company','Phone','WhatsApp','Email','Address','City','Category','Product','Source','Priority','Score','Status','Assigned To','Follow-up Date','Deal Value','Call Count','Created'];
+    const rows=all.map(l=>{const emp=S.employees.find(e=>e.id===l.assigned_to);return[l.name,l.company||'',l.phone||'',l.whatsapp||'',l.email||'',l.address||'',l.city||'',l.category||'',l.product||'',l.source||'',l.priority||'',l.score||'',l.status,emp?emp.name:'',l.followup_date||'',l.deal_value||'',l.call_count||0,new Date(l.created_at).toLocaleDateString()].map(v=>`"${String(v||'').replace(/"/g,'""')}"`).join(',');});
     const blob=new Blob([[h.join(','),...rows].join('\n')],{type:'text/csv'});
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='evynta_leads_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
     toast(`Exported ${all.length.toLocaleString()} leads ✓`,'s');
   }catch(e){toast('Export error: '+e.message,'e');}
 }
 
-// ─────────────────────────────────────────
-// BULK ASSIGN
-// ─────────────────────────────────────────
+// ─── BULK ASSIGN ───
 async function openBulkAssign(){
   const sel=document.getElementById('bulk-emp-sel');
   sel.innerHTML='<option value="">— select employee —</option>'+S.employees.map(e=>`<option value="${e.id}">${esc(e.name)}</option>`).join('');
-  try{ const {count}=await supaQ('leads','assigned_to=is.null&status=neq.junk&select=id'); document.getElementById('bulk-count').textContent=`${count.toLocaleString()} unassigned valid leads`; }catch(e){}
+  try{const{count}=await supaQ('leads','assigned_to=is.null&status=neq.junk&select=id');document.getElementById('bulk-count').textContent=`${count.toLocaleString()} unassigned valid leads`;}catch(e){}
   document.getElementById('bulk-status-row').style.display='none';
   document.getElementById('bulk-scope').onchange=function(){document.getElementById('bulk-status-row').style.display=this.value==='status'?'block':'none';};
   openOv('ov-bulk');
 }
 async function doBulkAssign(){
-  const empId=document.getElementById('bulk-emp-sel').value, scope=document.getElementById('bulk-scope').value;
+  const empId=document.getElementById('bulk-emp-sel').value,scope=document.getElementById('bulk-scope').value;
   if(!empId){toast('Select an employee','e');return;}
   const emp=S.employees.find(e=>e.id===empId);
   let filter='status=neq.junk';
-  if(scope==='unassigned') filter+='&assigned_to=is.null';
-  else if(scope==='status') filter+=`&status=eq.${document.getElementById('bulk-status-sel').value}`;
+  if(scope==='unassigned')filter+='&assigned_to=is.null';
+  else if(scope==='status')filter+=`&status=eq.${document.getElementById('bulk-status-sel').value}`;
   if(!confirm(`Assign matching leads to ${emp.name}?`))return;
-  try{
-    await supaRaw(`leads?${filter}`,'PATCH',{assigned_to:empId});
-    closeOv('ov-bulk'); toast(`Leads assigned to ${emp.name} ✓`,'s'); loadLeads(true);
-  }catch(e){toast('Error: '+e.message,'e');}
+  try{await supaRaw(`leads?${filter}`,'PATCH',{assigned_to:empId});closeOv('ov-bulk');toast(`Leads assigned to ${emp.name} ✓`,'s');loadLeads(true);}catch(e){toast('Error: '+e.message,'e');}
 }
 
-// ─────────────────────────────────────────
-// HELPERS
-// ─────────────────────────────────────────
+// ─── HELPERS ───
 function populateEmpSelects(){
   ['f-emp','lm-assign','up-assign','f-call-emp','man-assign','bulk-emp-sel'].forEach(id=>{
     const s=document.getElementById(id);if(!s)return;
-    const def={
-      'f-emp':'<option value="">All employees</option>',
-      'lm-assign':'<option value="">Unassigned</option>',
-      'up-assign':'<option value="">— unassigned —</option>',
-      'f-call-emp':'<option value="">All employees</option>',
-      'man-assign':'<option value="">Unassigned</option>',
-      'bulk-emp-sel':'<option value="">— select employee —</option>'
-    }[id]||'<option value="">—</option>';
+    const def={'f-emp':'<option value="">All employees</option>','lm-assign':'<option value="">Unassigned</option>','up-assign':'<option value="">— unassigned —</option>','f-call-emp':'<option value="">All employees</option>','man-assign':'<option value="">Unassigned</option>','bulk-emp-sel':'<option value="">— select employee —</option>'}[id]||'<option value="">—</option>';
     s.innerHTML=def+S.employees.map(e=>`<option value="${e.id}">${esc(e.name)}</option>`).join('');
   });
 }
@@ -1758,10 +1502,7 @@ function ago(ts){const s=Math.floor((Date.now()-new Date(ts).getTime())/1000);if
 function sLabel(s){return{new:'New',called:'Called',interested:'Interested',callback:'Callback',notinterested:'Not Interested',closed:'Closed',junk:'Junk'}[s]||s;}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-// ─────────────────────────────────────────
-// SUPABASE MIGRATION HELPER
-// ─────────────────────────────────────────
-// Run this SQL in your Supabase SQL editor to add new columns:
+// ─── SUPABASE: Run this SQL in Supabase SQL editor ───
 /*
 ALTER TABLE leads
   ADD COLUMN IF NOT EXISTS company TEXT,
@@ -1770,13 +1511,13 @@ ALTER TABLE leads
   ADD COLUMN IF NOT EXISTS source TEXT,
   ADD COLUMN IF NOT EXISTS deal_value NUMERIC,
   ADD COLUMN IF NOT EXISTS followup_date DATE,
-  ADD COLUMN IF NOT EXISTS score TEXT DEFAULT 'warm';
+  ADD COLUMN IF NOT EXISTS score TEXT DEFAULT 'warm',
+  ADD COLUMN IF NOT EXISTS category TEXT;
 
 ALTER TABLE call_logs
   ADD COLUMN IF NOT EXISTS company TEXT;
 */
 
-// Boot!
 boot();
 </script>
 </body>
