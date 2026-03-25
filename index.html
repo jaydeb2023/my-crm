@@ -1080,23 +1080,27 @@ function openUpdate(id,name,phone,company,product,city,status,score){
   openOv('ov-upd');
 }
 async function saveUpdate(){
-  const id=document.getElementById('um-id').value;
-  const note=document.getElementById('um-note').value.trim();
-  const cs=document.getElementById('um-call').value;
-  const dur=parseInt(document.getElementById('um-dur').value)||0;
-  const status=document.getElementById('um-status').value;
-  const score=document.getElementById('um-score').value;
-  const fu=document.getElementById('um-followup').value||null;
-  if(!note){toast('Please add a remark','e');return;}
+  const id = document.getElementById('um-id').value;
+  const note = document.getElementById('um-note').value.trim();
+  const cs = document.getElementById('um-call').value;
+  const dur = parseInt(document.getElementById('um-dur').value) || 0;
+  const status = document.getElementById('um-status').value;
+  const score = document.getElementById('um-score').value;
+  const fu = document.getElementById('um-followup').value || null;
+  if(!note){ toast('Please add a remark','e'); return; }
   try{
+    // ✅ FIX 1: params in 4th argument, not in path
     const lead = await supa('leads', 'GET', null, `id=eq.${id}&select=call_count,name,phone,company`);
-    const cnt=((lead&&lead[0]?.call_count)||0)+1;
-    await supa(`leads?id=eq.${id}`,'PATCH',{status,score,call_count:cnt,followup_date:fu});
+    const cnt = ((lead && lead[0]?.call_count) || 0) + 1;
+
+    // ✅ FIX 2: PATCH also uses params correctly
+    await supa('leads', 'PATCH', {status, score, call_count: cnt, followup_date: fu}, `id=eq.${id}`);
+
     await supa('remarks','POST',{lead_id:id,text:note,by_name:S.user.name,by_id:S.user.id,call_status:cs,duration:dur});
     await supa('call_logs','POST',{emp_id:S.user.id,emp_name:S.user.name,lead_id:id,lead_name:lead[0]?.name||'',company:lead[0]?.company||'',phone:lead[0]?.phone||'',status:cs,duration:dur,remark:note});
-    toast('Updated ✓','s');closeOv('ov-upd');loadMyLeads();
-    if(fu)toast(`Follow-up set for ${fu} 📅`,'i');
-  }catch(e){toast('Error: '+e.message,'e');}
+    toast('Updated ✓','s'); closeOv('ov-upd'); loadMyLeads();
+    if(fu) toast(`Follow-up set for ${fu} 📅`,'i');
+  }catch(e){ toast('Error: '+e.message,'e'); }
 }
 async function markJunkFromUpdate(){
   const id=document.getElementById('um-id').value;
