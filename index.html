@@ -1524,5 +1524,27 @@ ALTER TABLE call_logs
 
 boot();
 </script>
+
+  <script>
+document.addEventListener('click', function(e) {
+  if (e.target.innerText.includes('Save Update')) {
+
+    if (window._lockUpdate) {
+      e.stopImmediatePropagation();
+      return;
+    }
+
+    window._lockUpdate = true;
+
+    const btn = e.target;
+    btn.disabled = true;
+
+    setTimeout(() => {
+      window._lockUpdate = false;
+      btn.disabled = false;
+    }, 2000);
+  }
+});
+</script>
 </body>
 </html>
