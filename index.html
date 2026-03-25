@@ -1089,7 +1089,7 @@ async function saveUpdate(){
   const fu=document.getElementById('um-followup').value||null;
   if(!note){toast('Please add a remark','e');return;}
   try{
-    const lead=await supa(`leads?id=eq.${id}`,'GET',null,'select=call_count,name,phone,company');
+    const lead = await supa('leads', 'GET', null, `id=eq.${id}&select=call_count,name,phone,company`);
     const cnt=((lead&&lead[0]?.call_count)||0)+1;
     await supa(`leads?id=eq.${id}`,'PATCH',{status,score,call_count:cnt,followup_date:fu});
     await supa('remarks','POST',{lead_id:id,text:note,by_name:S.user.name,by_id:S.user.id,call_status:cs,duration:dur});
